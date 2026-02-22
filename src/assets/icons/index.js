@@ -1,0 +1,10 @@
+// assets/icons/index.js
+export { default as Facebook } from './facebook.svg'
+export { default as Instagram } from './instagram.svg'
+export { default as Linkedin } from './linkedin.svg'
+export { default as Pinterest } from './pinterest.svg'
+export { default as Reddit } from './reddit.svg'
+export { default as Stocktwits } from './stocktwits.svg'
+export { default as Telegram } from './telegram.svg'
+export { default as Tumblr } from './tumblr.svg'
+export { default as X } from './x.svg'
