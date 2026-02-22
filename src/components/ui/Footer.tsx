@@ -1,6 +1,7 @@
 // Footer.jsx
 import React from 'react';
 import './Footer.css';
+import SocialIcon from './SocialIcon'
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -28,7 +29,7 @@ const Footer = () => {
               {/* About Column */}
               <div className="footer-column">
                 <a href="#" className="footer-column-header">About</a>
-                <div className="footer-links">
+                <div className="footer-link-container">
                   <a href="#" className="footer-link">Corporate</a>
                   <a href="#" className="footer-link">Services</a>
                   <a href="#" className="footer-link">Partners</a>
@@ -40,7 +41,7 @@ const Footer = () => {
               {/* Terms Column */}
               <div className="footer-column">
                 <a href="#" className="footer-column-header">Terms</a>
-                <div className="footer-links">
+                <div className="footer-link-container">
                   <a href="#" className="footer-link">Privacy Policy</a>
                   <a href="#" className="footer-link">Terms of Use</a>
                   <a href="#" className="footer-link">Cookies Policy</a>
@@ -54,7 +55,7 @@ const Footer = () => {
               {/* Research Column */}
               <div className="footer-column">
                 <a href="#" className="footer-column-header">Research</a>
-                <div className="footer-links">
+                <div className="footer-link-container">
                   <a href="#" className="footer-link">Company</a>
                   <a href="#" className="footer-link">Region</a>
                   <a href="#" className="footer-link">Sector</a>
@@ -65,7 +66,7 @@ const Footer = () => {
               {/* Participate Column */}
               <div className="footer-column">
                 <a href="#" className="footer-column-header">Participate</a>
-                <div className="footer-links">
+                <div className="footer-link-container">
                   <a href="#" className="footer-link">Register</a>
                   <a href="#" className="footer-link">Login</a>
                   <a href="#" className="footer-link">FAQ</a>
@@ -78,18 +79,52 @@ const Footer = () => {
             {/* Follow Us Column - with two columns inside */}
             <div className="footer-column">
               <a href="#" className="footer-column-header">Follow Us</a>
-              <div className="footer-links">
-                <div className="footer-social-row">
-                  <a href="#" className="footer-link">Facebook</a>
-                  <a href="#" className="footer-link">LinkedIn</a>
-                  <a href="#" className="footer-link">Twitter</a>
-                  <a href="#" className="footer-link">Stock Twits</a>
-                </div>
-                <div className="footer-social-row">
-                  <a href="#" className="footer-link">Pinterest</a>
-                  <a href="#" className="footer-link">Reddit</a>
-                  <a href="#" className="footer-link">Instagram</a>
-                  <a href="#" className="footer-link">Telegram</a>
+              <div className="footer-link-container">
+                <div className="footer-row">
+                  <div className="footer-link-wrap"> 
+                    <SocialIcon platform="facebook" className="footer-icon" />
+                    <a href="#" className="footer-link">Facebook</a>
+                  </div>
+
+                  <div className="footer-link-wrap"> 
+                    <SocialIcon platform="linkedin" className="footer-icon" />
+                    <a href="#" className="footer-link">LinkedIn</a>
+                  </div>
+
+                  <div className="footer-link-wrap"> 
+                    <SocialIcon platform="x" className="footer-icon" />
+                    <a href="#" className="footer-link">X (Twitter)</a>
+                  </div>
+
+                  <div className="footer-link-wrap"> 
+                    <SocialIcon platform="stocktwits" className="footer-icon" />
+                    <a href="#" className="footer-link">Stock Twits</a>
+                  </div>
+
+                  <div className="footer-link-wrap"> 
+                    <SocialIcon platform="pinterest" className="footer-icon" />
+                    <a href="#" className="footer-link">Pinterest</a>
+                  </div>
+
+                  <div className="footer-link-wrap"> 
+                    <SocialIcon platform="reddit" className="footer-icon" />
+                    <a href="#" className="footer-link">Reddit</a>
+                  </div>
+
+                  <div className="footer-link-wrap"> 
+                    <SocialIcon platform="instagram" className="footer-icon" />
+                    <a href="#" className="footer-link">Instagram</a>
+                  </div>
+
+                  <div className="footer-link-wrap"> 
+                    <SocialIcon platform="telegram" className="footer-icon" />
+                    <a href="#" className="footer-link">Telegram</a>
+                  </div>
+
+                  <div className="footer-link-wrap"> 
+                    <SocialIcon platform="tumblr" className="footer-icon" />
+                    <a href="#" className="footer-link">Tumblr</a>
+                  </div>
                 </div>
               </div>
             </div>
