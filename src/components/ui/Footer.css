@@ -109,6 +109,7 @@
 @media screen and (max-width: 991px) {
   .footer-container {
     padding: 1.5rem;
+    padding-top: 3rem;
   }
   
   .footer-grid {
@@ -123,8 +124,8 @@
     gap: 2rem;
   }
 
-  .footer {
-    padding-top: 2rem;
+  .footer-divider-gray {
+    margin-bottom: 2rem;
   }
 }
 
