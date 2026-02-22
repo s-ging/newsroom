@@ -102,7 +102,7 @@ const Footer = () => {
 
       {/* Copyright */}
       <div className="footer-copyright">
-        <div className="footer-link">
+        <div className="footer-link" style={{ fontSize: '12px' }}>
           Copyright © {currentYear} ACN Newswire. All rights reserved.
         </div>
       </div>

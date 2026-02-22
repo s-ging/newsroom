@@ -5,6 +5,7 @@
   padding-top: 0;
   padding-bottom: 0;
   width: 100%;
+  min-width: 300px;
 }
 
 .footer-divider {
@@ -34,13 +35,13 @@
 }
 
 .footer-logo {
-  width: 250px;
+  width: clamp(150px, 100%, 250px);
   display: inline-block;
   margin-bottom: 2rem;
 }
 
 .footer-logo img {
-  width: 250px;
+  width: 100%;
   height: auto;
 }
 
@@ -113,24 +114,28 @@
   .footer-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 2rem;
+    width: 100%;
   }
   
+  .footer-top {
+    flex-direction: column;
+    align-items: left;
+    gap: 2rem;
+  }
+
   .footer {
     padding-top: 2rem;
   }
 }
 
 @media screen and (max-width: 767px) {
+
   .footer-container {
     padding: 1rem;
   }
 }
 
 @media screen and (max-width: 479px) {
-  .footer-logo img {
-    width: 200px;
-  }
-  
   .footer-grid {
     grid-template-columns: 1fr;
     gap: 1.5rem;
