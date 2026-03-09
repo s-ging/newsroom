@@ -79,29 +79,23 @@ export default function LanguageSelector({
         </svg>
       </button>
       
-      {isOpen && (
-        <ul 
-          className="global-dropdown-menu absolute top-50 z-999 mt-1 bg-white border shadow-lg list-none p-0 m-0"
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-          style={{ top: '100%', left: 0 }}
-        >
-          {safeLanguages.map((lang) => (
-            <li key={lang.code} className="m-0">
-              <a 
-                href={lang.href}
-                className={`px-4 py-2 text-decoration-none ${
-                  lang.code === activeLocale 
-                    ? 'fw-bold text-primary' 
-                    : 'text-gray-700 hover:bg-gray-100'
-                }`}
-              >
-                {lang.label} ({lang.code})
-              </a>
-            </li>
-          ))}
-        </ul>
-      )}
+{isOpen && (
+  <div className="absolute mt-[7.5px] w-48 bg-white border border-gray-300 shadow-lg py-1 z-50">
+    {safeLanguages.map((lang) => (
+      <a
+        key={lang.code}
+        href={lang.href}
+        className={`block px-4 py-2 text-sm ${
+          lang.code === activeLocale 
+            ? 'block px-4 py-2 text-sm' 
+            : 'text-gray-700 hover:bg-gray-100'
+        }`}
+      >
+        {lang.label} ({lang.code})
+      </a>
+    ))}
+  </div>
+)}
     </div>
   );
 }
