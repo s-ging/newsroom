@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useLayoutEffect, useRef } from 'react' // Add useLayoutEffect
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import type { MegaMenuItem } from './types'
@@ -19,6 +19,7 @@ interface MegaMenuNavProps {
   isSwitching?: boolean
 }
 
+
 export default function MegaMenuNav({ 
   items = DEFAULT_MEGA_MENU_ITEMS,
   activeMenu,
@@ -28,15 +29,36 @@ export default function MegaMenuNav({
 }: MegaMenuNavProps) {
   const pathname = usePathname()
   const [menuHeight, setMenuHeight] = useState(0)
+  const [shouldRender, setShouldRender] = useState(false)
   const contentRef = useRef<HTMLDivElement>(null)
+  const prevActiveMenuRef = useRef<string | null>(null)
 
-  // Measure content height when menu changes
+  // Handle menu opening
   useEffect(() => {
-    if (contentRef.current && activeMenu) {
+    if (activeMenu && !isContainerClosing) {
+      setShouldRender(true)
+      prevActiveMenuRef.current = activeMenu
+    }
+  }, [activeMenu, isContainerClosing])
+
+  // Measure height synchronously after render but before paint
+  useLayoutEffect(() => {
+    if (shouldRender && contentRef.current && !isContainerClosing) {
       setMenuHeight(contentRef.current.scrollHeight)
     }
-  }, [activeMenu])
+  }, [activeMenu, shouldRender, isContainerClosing]) // Re-measure when activeMenu changes
 
+  // Handle closing animation
+  useEffect(() => {
+    if (isContainerClosing) {
+      setMenuHeight(0)
+      const timer = setTimeout(() => {
+        setShouldRender(false)
+      }, 75)
+      return () => clearTimeout(timer)
+    }
+  }, [isContainerClosing])
+  
   return (
     <>
       {/* Mega menu bar */}
@@ -63,7 +85,7 @@ export default function MegaMenuNav({
       </div>
 
       {/* Dropdown menu */}
-      {activeMenu && (
+      {shouldRender && (
         <div 
           className="absolute left-0 right-0 top-full bg-white border-t border-gray-200 shadow-lg z-40 overflow-hidden"
           style={{
@@ -74,6 +96,7 @@ export default function MegaMenuNav({
           <div ref={contentRef}>
             <div className="container mx-auto px-4 py-6 relative">
               <div 
+                key={activeMenu}
                 className="transition-opacity duration-75"
                 style={{ opacity: isContainerClosing ? 0 : (isSwitching ? 0 : 1) }}
               >
