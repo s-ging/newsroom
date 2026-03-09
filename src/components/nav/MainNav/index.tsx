@@ -16,8 +16,6 @@ const NAV_ITEMS = [
   { label: 'Register', href: '/register', desktopOnly: true }
 ]
 
-
-
 export default function MainNav() {
   const [isOpen, setIsOpen] = useState(false)
   const pathname = usePathname()
@@ -36,7 +34,7 @@ export default function MainNav() {
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (megaMenuRef.current && !megaMenuRef.current.contains(event.target as Node)) {
-        setActiveMegaMenu(null)
+        closeMenu()
       }
     }
 
@@ -134,7 +132,15 @@ export default function MainNav() {
             <div>
               <MegaMenuNav 
                 activeMenu={activeMegaMenu}
-                onMenuHover={setActiveMegaMenu}
+                onMenuHover={(menu) => {
+                  if (menu) {
+                    setIsClosing(false)
+                    setActiveMegaMenu(menu)
+                  } else {
+                    closeMenu()
+                  }
+                }}
+                isClosing={isClosing}
               />
             </div>
           </div>
@@ -264,7 +270,7 @@ export default function MainNav() {
             onClick={closeMenu}
             className="flex flex-row justify-between nav-button alt opacity-60 w-32"
           >
-            <span>✕</span> Close Menu
+            <span className="font-bold">✕</span> Close Menu
           </button>
         </div>
       )}

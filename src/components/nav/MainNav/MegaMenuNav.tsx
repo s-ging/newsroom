@@ -7,8 +7,9 @@ import type { MegaMenuItem } from './types'
 import { DEFAULT_MEGA_MENU_ITEMS } from './types'
 
 import Company from './Company'
-
+import Region from './Region'
 import Sector from './Sector'
+import Industry from './Industry'
 
 interface MegaMenuNavProps {
   items?: MegaMenuItem[]

@@ -49,10 +49,10 @@ export default function CompanyMenu({ onClose }: MenuProps) {
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-6 lg:gap-4">
           {REGIONS.map((region) => (
             <div key={region.title} className="min-w-35">
-              <p className="text-sm font-semibold text-gray-900 mb-2">
+              <p className="dropdown-link label mb-3">
                 {region.title}
               </p>
-              <div className="space-y-1.5">
+              <div className="space-y-3">
                 {region.links.map((link) => (
                   <Link
                     key={link.label}
