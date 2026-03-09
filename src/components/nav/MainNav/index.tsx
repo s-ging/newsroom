@@ -20,15 +20,21 @@ export default function MainNav() {
   const [isOpen, setIsOpen] = useState(false)
   const pathname = usePathname()
   const [activeMegaMenu, setActiveMegaMenu] = useState<string | null>(null)
-  const [isClosing, setIsClosing] = useState(false)
+  const [isContainerClosing, setIsContainerClosing] = useState(false) // For final close
+  const [isSwitching, setIsSwitching] = useState(false) // For menu transitions
   const megaMenuRef = useRef<HTMLDivElement>(null)
 
   const closeMenu = () => {
-    setIsClosing(true)
+    // Start closing the container
+    setIsContainerClosing(true)
+    
     setTimeout(() => {
+      // Remove the menu entirely
       setActiveMegaMenu(null)
-      setIsClosing(false)
-    }, 200)
+      // Reset both states
+      setIsContainerClosing(false)
+      setIsSwitching(false)
+    }, 150) // Match animation duration
   }
 
   useEffect(() => {
@@ -134,13 +140,28 @@ export default function MainNav() {
                 activeMenu={activeMegaMenu}
                 onMenuHover={(menu) => {
                   if (menu) {
-                    setIsClosing(false)
-                    setActiveMegaMenu(menu)
+                    if (activeMegaMenu && activeMegaMenu !== menu) {
+                      // Switching - only fade content
+                      setIsSwitching(true)
+                      setTimeout(() => {
+                        setActiveMegaMenu(menu)
+                        setTimeout(() => setIsSwitching(false), 75)
+                      }, 75)
+                    } else {
+                      // Opening fresh
+                      setActiveMegaMenu(menu)
+                    }
                   } else {
-                    closeMenu()
+                    // Closing - fade container
+                    setIsContainerClosing(true)
+                    setTimeout(() => {
+                      setActiveMegaMenu(null)
+                      setIsContainerClosing(false)
+                    }, 150)
                   }
                 }}
-                isClosing={isClosing}
+                isContainerClosing={isContainerClosing}
+                isSwitching={isSwitching}
               />
             </div>
           </div>
@@ -263,8 +284,9 @@ export default function MainNav() {
         </div>
       )}
       {activeMegaMenu && (
-        <div className={`fixed bottom-9 left-1/2 -translate-x-1/2 z-[100] transition-all duration-200 ${
-          isClosing ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'
+        <div 
+          className={`fixed bottom-9 left-1/2 -translate-x-1/2 z-[100] transition-all duration-200 ${
+          isContainerClosing ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'
         }`}>
           <button
             onClick={closeMenu}

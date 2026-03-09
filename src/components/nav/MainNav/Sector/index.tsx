@@ -20,9 +20,6 @@ const SECTORS = [
 
 export default function SectorMenu({ onClose }: SectorMenuProps) {
   return (
-    <div className="absolute left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-40">
-      <div className="container mx-auto px-4 py-6 relative">
-        {/* Sectors grid - single column, evenly spaced like original */}
         <div className="flex flex-wrap justify-center gap-x-8 gap-y-4">
           {SECTORS.map((sector) => (
             <div key={sector.name} className="dropdown-menu-section">
@@ -38,9 +35,5 @@ export default function SectorMenu({ onClose }: SectorMenuProps) {
             </div>
           ))}
         </div>
-
-        {/* Note: No alphabet nav for sectors - matches original HTML */}
-      </div>
-    </div>
   )
 }

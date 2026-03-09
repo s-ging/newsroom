@@ -101,9 +101,6 @@ const REGIONS = [
 
 export default function RegionMenu({ onClose }: RegionMenuProps) {
   return (
-    <div className="absolute left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-40 max-h-[80vh] overflow-y-auto">
-      <div className="container mx-auto px-4 py-6 relative">
-        {/* Regions grid - matches original column structure */}
         <div className="grid grid-cols-5 gap-8">
           {REGIONS.map((region) => (
             <div key={region.continent} className="dropdown-menu-section">
@@ -135,7 +132,5 @@ export default function RegionMenu({ onClose }: RegionMenuProps) {
             </div>
           ))}
         </div>
-      </div>
-    </div>
   )
 }

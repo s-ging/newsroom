@@ -48,8 +48,6 @@ const INDUSTRY_SECTIONS = [
 
 export default function IndustryMenu({ onClose }: IndustryMenuProps) {
   return (
-    <div className="absolute left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-40 max-h-[80vh] overflow-y-auto">
-      <div className="container mx-auto px-4 py-6 relative">
         <div className="grid grid-cols-9 gap-6">
           {INDUSTRY_SECTIONS.map((section) => (
             <div key={section.category} className="dropdown-menu-section">
@@ -73,7 +71,5 @@ export default function IndustryMenu({ onClose }: IndustryMenuProps) {
             </div>
           ))}
         </div>
-      </div>
-    </div>
   )
 }
