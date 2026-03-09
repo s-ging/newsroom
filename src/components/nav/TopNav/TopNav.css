@@ -1,0 +1,79 @@
+/* src/components/nav/TopNav/TopNav.css */
+.top-nav {
+    padding: 0px 16px 0px 16px;
+    background: #FAFAFA;
+    border-bottom: 1px solid #D9D9D9;
+    font-size: 14px;
+}
+
+.top-nav .nav-left {
+    align-items: center;
+    width: 150px;
+    gap: 8px;
+    border-right: 1px solid #D9D9D9;
+}
+
+.top-nav .nav-middle p {
+    margin-bottom: 0;
+}
+
+.top-nav .nav-right a {
+    color: #999;
+    text-decoration: none;
+}
+
+.top-nav .global-dropdown {
+    cursor: pointer;
+    position: relative;
+    width: 150px;
+    text-decoration: none;
+    z-index: 1;
+    transform: perspective(1000px);
+}
+
+.top-nav .global-dropdown-menu {
+    background-color: #FAFAFA;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    left: 0;
+    opacity: 0;
+    text-align: left;
+    top: 0;
+    visibility: hidden;
+    z-index: 99999;
+}
+
+.top-nav .global-dropdown-menu li:first-child {
+    cursor: default;
+}
+
+.top-nav .global-dropdown-menu a {
+    color: #000;
+    display: inline-block;
+    width: 100%;
+    padding: 12px;
+    text-decoration: none;
+    -webkit-transition: all 1s;
+    transition: all 1s;
+}
+
+.top-nav .global-dropdown-menu a:hover {
+    background-color: #999;
+    color: white;
+}
+
+.top-nav .global-dropdown:hover .global-dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    top: 155%;
+    left: -25px;
+    width: 150px;
+    -webkit-transition: all .5s, background 2s .5s linear;
+    transition: all .5s, background 2s .5s linear;
+}
+
+.separator {
+    margin-right: 30px;
+}
