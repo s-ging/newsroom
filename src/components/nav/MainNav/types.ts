@@ -13,3 +13,24 @@ export interface MainNavProps {
   }>
   className?: string
 }
+
+export interface MegaMenuItem {
+  label: string
+  href: string
+  hasDropdown?: boolean
+  megaMenuContent?: string
+}
+
+export interface MegaMenuNavProps {
+  items?: MegaMenuItem[]
+}
+
+// Either in types.ts or at top of MegaMenuNav.tsx
+export const DEFAULT_MEGA_MENU_ITEMS: MegaMenuItem[] = [
+  { label: 'Company', href: '#', hasDropdown: true, megaMenuContent: 'company' },
+  { label: 'Region', href: '#', hasDropdown: true, megaMenuContent: 'region'},
+  { label: 'Sector', href: '#', hasDropdown: true, megaMenuContent: 'sector' },
+  { label: 'Industry', href: '#', hasDropdown: true, megaMenuContent: 'industry' },
+  { label: 'Language', href: '#' },
+  { label: 'Events', href: '#' },
+]

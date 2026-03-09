@@ -50,3 +50,30 @@
     inset 0 0 0 1px black,
     inset 0 0 8px 2px #CCCCCC;
 }
+
+.nav-link.mega {
+  padding: 8px 2px 4px 2px;
+  margin-right: 12px;
+  border-bottom: 4px solid var(--background);
+  transition: all 0.125s ease
+}
+
+.nav-link.mega:hover {
+  border-bottom: 4px solid var(--accent-color);
+  text-shadow: 0 0 0 var(--background);
+}
+
+.dropdown-link {
+  color: var(--nav-text-color);
+  font-size: 14px;
+  transition: all 0.125s ease;
+}
+
+.dropdown-link:hover {
+  color: var(--accent-color);
+}
+
+.dropdown-link.label{
+  color: var(--text-color);
+}
+

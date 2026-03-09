@@ -1,12 +1,13 @@
 // components/nav/MainNav.tsx
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import logo from '../../../app/logo.svg';
 import "./MainNav.css";
+import MegaMenuNav from './MegaMenuNav';
 
 const NAV_ITEMS = [
   { label: 'About', href: '/about' },
@@ -15,9 +16,35 @@ const NAV_ITEMS = [
   { label: 'Register', href: '/register', desktopOnly: true }
 ]
 
+
+
 export default function MainNav() {
   const [isOpen, setIsOpen] = useState(false)
   const pathname = usePathname()
+  const [activeMegaMenu, setActiveMegaMenu] = useState<string | null>(null)
+  const [isClosing, setIsClosing] = useState(false)
+  const megaMenuRef = useRef<HTMLDivElement>(null)
+
+  const closeMenu = () => {
+    setIsClosing(true)
+    setTimeout(() => {
+      setActiveMegaMenu(null)
+      setIsClosing(false)
+    }, 200)
+  }
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (megaMenuRef.current && !megaMenuRef.current.contains(event.target as Node)) {
+        setActiveMegaMenu(null)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [])
 
   return (
     <nav className="bg-white border-b border-gray-200 sticky top-0 z-99">
@@ -100,6 +127,18 @@ export default function MainNav() {
               )
             })}
           </div>
+      </div> {/* This closes the container mx-auto px-4 */}
+
+          {/* Desktop Mega Menu - new row below */}
+          <div ref={megaMenuRef} className="hidden lg:block border-t border-gray-200">
+            <div>
+              <MegaMenuNav 
+                activeMenu={activeMegaMenu}
+                onMenuHover={setActiveMegaMenu}
+              />
+            </div>
+          </div>
+
 
           {/* Mobile Menu Button - below lg */}
           <button
@@ -119,7 +158,6 @@ export default function MainNav() {
             )}
           </button>
         </div>
-      </div>
 
       {/* Mobile Menu - full screen overlay */}
       {isOpen && (
@@ -218,6 +256,21 @@ export default function MainNav() {
           </div>
         </div>
       )}
+      {activeMegaMenu && (
+        <div className={`fixed bottom-9 left-1/2 -translate-x-1/2 z-[100] transition-all duration-200 ${
+          isClosing ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'
+        }`}>
+          <button
+            onClick={closeMenu}
+            className="flex flex-row justify-between nav-button alt opacity-60 w-32"
+          >
+            <span>✕</span> Close Menu
+          </button>
+        </div>
+      )}
+
     </nav>
+
+    
   )
 }
