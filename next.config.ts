@@ -1,7 +1,25 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'www.acnnewswire.com',
+        port: '',
+        pathname: '/images/company/**', // This matches your image path!
+        search: '',
+      },
+      // Add other domains you might need
+      {
+        protocol: 'https',
+        hostname: 'photos.acnnewswire.com',
+        port: '',
+        pathname: '/**',
+        search: '',
+      },
+    ],
+  },
   reactCompiler: true,
 };
 
