@@ -1,10 +1,9 @@
 // press-release/PressRelease.tsx
-import { Headline } from './Headline';
-import { Meta } from './Meta';
 import { Hero } from './Hero';
 import { Body } from './Body';
 import { Company } from './Company';
-import { Footer } from './Footer';
+import { ArticleMeta } from './ArticleMeta';
+import { ArticleFooterLink } from './ArticleFooterLink';
 import type { PressReleaseData } from './types';
 
 interface PressReleaseProps {
@@ -13,51 +12,30 @@ interface PressReleaseProps {
 }
 
 export function PressRelease({ data, className = '' }: PressReleaseProps) {
-  const location = data.location.sub_Location 
-    ? `${data.location.sub_Location}, ${data.location.name}`
-    : data.location.name;
-  
+  const company = data.companies?.[0];
+
   return (
     <article className={`max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 ${className}`}>
-      
-      {/* Temporary URL display - remove later */}
-      <div className="mb-4 text-sm text-gray-500">
-        acnnewswire.com/{data.companies?.[0]?.company_Name?.toLowerCase().replace(/\s+/g, '-') || 'company'}/{data.id}
-      </div>
-      
-      {data.companies?.[0] && (
-        <Hero 
-          logo={data.companies[0].logofilename}
-          companyName={data.companies[0].company_Name}
-          headline={data.headline}
-        />
-      )}
-      
-      <Headline 
-        title={data.headline}
-        subhead={data.subHeadline}
-      />
-      
-      <Meta 
+      <Hero
+        logo={company?.logofilename}
+        companyName={company?.company_Name ?? ''}
+        headline={data.headline}
+        subHeadline={data.subHeadline}
         sectors={data.sector}
-        topic={data.topic}
         source={data.source}
-        dateTime={data.dateTime}
-        location={location}
-        views={data.views}
       />
-      
+
       <Body content={data.bodyHtml} />
-      
-      {data.companies?.[0] && (
-        <Company company={data.companies[0]} />
-      )}
-      
-      <Footer 
-        views={data.views}
-        url={data.url}
+
+      {company && <Company company={company} />}
+
+      <ArticleMeta
+        topic={data.topic}
+        sectors={data.sector}
+        source={data.source}
       />
-      
+
+      <ArticleFooterLink views={data.views} />
     </article>
   );
 }

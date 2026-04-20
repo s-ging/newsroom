@@ -30,6 +30,7 @@ export const mockPressRelease: PressReleaseData = {
     companyNameKO: "Mitsubishi Heavy Industries, Ltd.",
     logofilename: "https://www.acnnewswire.com/images/company/MHI_new.jpg",
     url: "www.mhi.com",
+    description: "Mitsubishi Heavy Industries, Ltd. (MHI) is a global leader in engineering and manufacturing that has been tackling societal challenges and supporting people's lives since its founding in 1884. Combining advanced expertise with cutting-edge insight, MHI is committed to the energy transition toward a carbon-neutral society, smart social infrastructure, and cyber security, helping realize a more prosperous future for all.",
     facebook: "https://www.facebook.com/mhi.ltd/",
     twitter: "https://twitter.com/MHI_Group",
     youtube: "https://www.youtube.com/user/DiscoverMHI",

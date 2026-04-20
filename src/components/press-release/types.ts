@@ -8,6 +8,7 @@ export interface CompanyData {
   companyNameKO?: string;
   logofilename: string;
   url: string;
+  description?: string;
   facebook?: string;
   twitter?: string;
   youtube?: string;

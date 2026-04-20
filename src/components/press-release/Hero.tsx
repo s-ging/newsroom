@@ -7,57 +7,85 @@ import { useState } from 'react';
 interface HeroProps {
   logo?: string | null;
   companyName: string;
-  headline?: string;
+  headline: string;
+  subHeadline?: string | null;
+  sectors?: string[];
+  source?: string;
   className?: string;
 }
 
-function HeroImage({ src, alt }: { src: string; alt: string }) {
+function LogoMark({ src, alt }: { src: string; alt: string }) {
   const [error, setError] = useState(false);
-  
+
   if (error || !src) {
     return (
-      <div className="w-32 h-32 md:w-40 md:h-40 bg-gray-100 rounded-lg flex items-center justify-center">
-        <span className="text-gray-400 text-sm text-center px-2">
-          {alt.substring(0, 3)}...
-        </span>
+      <div className="h-10 md:h-12 flex items-center text-sm font-semibold text-gray-700">
+        {alt}
       </div>
     );
   }
-  
+
   return (
-    <div className="relative w-32 h-32 md:w-40 md:h-40">
-      <Image 
+    <div className="relative h-10 md:h-12 w-40 md:w-48">
+      <Image
         src={src}
         alt={alt}
         fill
-        className="object-contain"
+        className="object-contain object-left"
         onError={() => setError(true)}
-        sizes="(max-width: 768px) 128px, 160px"
+        sizes="(max-width: 768px) 160px, 192px"
       />
     </div>
   );
 }
 
-export function Hero({ logo, companyName, headline, className = '' }: HeroProps) {
+export function Hero({
+  logo,
+  companyName,
+  headline,
+  subHeadline,
+  sectors,
+  source,
+  className = '',
+}: HeroProps) {
+  const tagParts: string[] = [];
+  if (sectors && sectors.length) {
+    tagParts.push(...sectors);
+  }
+  if (source) {
+    tagParts.push(`Source: ${source}`);
+  }
+
   return (
-    <div className={`bg-gradient-to-r from-gray-50 to-white p-6 rounded-lg border border-gray-200 mb-6 ${className}`}>
-      <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
-        <div className="flex-shrink-0">
-          <HeroImage src={logo || ''} alt={companyName} />
-        </div>
-        
-        <div className="flex-1">
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">
-            {companyName}
-          </h2>
-          
-          {headline && (
-            <p className="text-gray-600 line-clamp-2">
-              {headline}
-            </p>
-          )}
-        </div>
+    <header className={`mb-8 ${className}`}>
+      <div className="mb-6">
+        <LogoMark src={logo || ''} alt={companyName} />
       </div>
-    </div>
+
+      <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight">
+        {headline}
+      </h1>
+
+      {subHeadline && (
+        <p className="mt-4 text-xl md:text-2xl text-gray-600 font-medium">
+          {subHeadline}
+        </p>
+      )}
+
+      {tagParts.length > 0 && (
+        <p className="mt-6 text-xs md:text-sm uppercase text-gray-600">
+          {tagParts.map((part, i) => (
+            <span key={i}>
+              {i > 0 && <span className="mx-2 text-gray-400">•</span>}
+              <span className={part.startsWith('Source:') ? '' : 'font-semibold text-gray-800'}>
+                {part}
+              </span>
+            </span>
+          ))}
+        </p>
+      )}
+
+      <hr className="mt-6 border-gray-200" />
+    </header>
   );
 }
