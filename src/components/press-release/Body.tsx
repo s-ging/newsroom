@@ -1,7 +1,7 @@
 // press-release/Body.tsx
 'use client';
 
-import DOMPurify from 'dompurify';
+import DOMPurify from 'isomorphic-dompurify';
 
 interface BodyProps {
   content: string;
