@@ -67,17 +67,17 @@ export function Hero({
       </h1>
 
       {subHeadline && (
-        <p className="mt-4 text-xl md:text-2xl text-gray-600 font-medium leading-relaxed">
+        <p className="mt-4 text-xl md:text-2xl text-gray-400 font-medium leading-relaxed">
           {subHeadline}
         </p>
       )}
 
       {tagParts.length > 0 && (
-        <p className="mt-6 text-xs md:text-sm uppercase text-gray-600">
+        <p className="mt-6 text-xs md:text-sm uppercase text-gray-400">
           {tagParts.map((part, i) => (
             <span key={i}>
               {i > 0 && <span className="mx-2 text-gray-400">•</span>}
-              <span className={part.startsWith('Source:') ? '' : 'font-semibold text-gray-800'}>
+              <span className={part.startsWith('Source:') ? '' : 'font-semibold text-gray-500'}>
                 {part}
               </span>
             </span>
