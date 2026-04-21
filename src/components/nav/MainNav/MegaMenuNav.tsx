@@ -97,8 +97,8 @@ export default function MegaMenuNav({
         >
           <div ref={contentRef}>
             <div
-              className={`mx-auto px-4 py-6 relative w-full transition-[max-width] duration-200 ${
-                isScrolled ? 'max-w-[1920px]' : 'max-w-screen-2xl'
+              className={`mx-auto py-6 relative w-full transition-[max-width] duration-200 ${
+                isScrolled ? 'max-w-[1920px] px-[60px]' : 'max-w-[1920px] px-[60px]'
               }`}
             >
               <div 
