@@ -22,7 +22,15 @@ export default function MainNav() {
   const [activeMegaMenu, setActiveMegaMenu] = useState<string | null>(null)
   const [isContainerClosing, setIsContainerClosing] = useState(false) // For final close
   const [isSwitching, setIsSwitching] = useState(false) // For menu transitions
+  const [isScrolled, setIsScrolled] = useState(false)
   const megaMenuRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const onScroll = () => setIsScrolled(window.scrollY > 16)
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
 
   const closeMenu = () => {
     // Start closing the container
@@ -52,7 +60,11 @@ export default function MainNav() {
 
   return (
     <nav className="bg-white border-b border-gray-200 sticky top-0 z-99">
-      <div className="container mx-auto px-4">
+      <div
+        className={`mx-auto w-full transition-[max-width,padding] duration-200 ${
+          isScrolled ? 'max-w-[1920px] px-4' : 'max-w-[1920px] px-[60px]'
+        }`}
+      >
 
         <div className="flex flex-row items-center h-16 lg:flex-col lg:h-auto">
           <div className="flex flex-row justify-between gap-4 py-3 w-full">
@@ -116,6 +128,7 @@ export default function MainNav() {
           <div ref={megaMenuRef} className="hidden lg:block border-t border-gray-200 w-full">
             <MegaMenuNav
               activeMenu={activeMegaMenu}
+              isScrolled={isScrolled}
               onMenuHover={(menu) => {
                 if (menu) {
                   if (activeMegaMenu && activeMegaMenu !== menu) {
