@@ -73,9 +73,13 @@ body {
 }
 
 .article-body p {
-  color: #333333;
+  color: #777777;
   line-height: 1.7;
   margin-bottom: 1.5rem; 
+}
+
+.article-body strong {
+  color: #333333;
 }
 
 .article-body img {
