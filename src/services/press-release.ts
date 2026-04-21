@@ -2,21 +2,16 @@
 import type { PressReleaseData } from '@/components/press-release/types';
 import type { AcnPressRelease } from './acn-api.types';
 import { adaptAcnPressRelease } from './acn-adapter';
-import { mockPressRelease } from './mock-press-release';
 
 const API_BASE = 'https://www.acnnewswire.com/acnnewswireapi';
 
-// ← flip to false when the real API is ready
-const USE_MOCK = true;
-
-export async function getPressRelease(id: number): Promise<PressReleaseData> {
-  if (USE_MOCK) {
-    return mockPressRelease; // already matches your clean type, no adapter needed
-  }
-
+export async function fetchPressRelease(id: number): Promise<PressReleaseData> {
   const res = await fetch(
-    `${API_BASE}/PressRelease/GetPressReleaseByID?prid=${id}`,
-    { next: { revalidate: 3600 } }
+    `${API_BASE}/api/v1/News/GetArticleById/${id}`,
+    {
+      next: { revalidate: 3600 },
+      headers: { Accept: 'application/json' },
+    },
   );
 
   if (!res.ok) {
@@ -24,7 +19,5 @@ export async function getPressRelease(id: number): Promise<PressReleaseData> {
   }
 
   const raw: AcnPressRelease = await res.json();
-
-  // ← this is the only place the adapter is ever called
   return adaptAcnPressRelease(raw);
 }
