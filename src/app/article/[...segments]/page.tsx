@@ -9,8 +9,6 @@ type Props = {
   params: Promise<{ segments: string[] }>
 }
 
-const slug = headlineToSlug(decodeHtmlEntities(article.headline), article.id);
-
 export default async function ArticlePage({ params }: Props) {
   const { segments } = await params;
 
