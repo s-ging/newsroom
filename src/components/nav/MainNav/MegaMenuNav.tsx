@@ -17,15 +17,17 @@ interface MegaMenuNavProps {
   onMenuHover?: (menu: string | null) => void
   isContainerClosing?: boolean
   isSwitching?: boolean
+  isScrolled?: boolean
 }
 
 
-export default function MegaMenuNav({ 
+export default function MegaMenuNav({
   items = DEFAULT_MEGA_MENU_ITEMS,
   activeMenu,
   onMenuHover,
   isContainerClosing,
-  isSwitching
+  isSwitching,
+  isScrolled
 }: MegaMenuNavProps) {
   const pathname = usePathname()
   const [menuHeight, setMenuHeight] = useState(0)
@@ -94,7 +96,11 @@ export default function MegaMenuNav({
           }}
         >
           <div ref={contentRef}>
-            <div className="container mx-auto px-4 py-6 relative">
+            <div
+              className={`mx-auto py-6 relative w-full transition-[max-width] duration-200 ${
+                isScrolled ? 'max-w-[1920px] px-[60px]' : 'max-w-[1920px] px-[60px]'
+              }`}
+            >
               <div 
                 key={activeMenu}
                 className="transition-opacity duration-75"

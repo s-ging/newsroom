@@ -17,8 +17,7 @@ export function Body({ content, className = '' }: BodyProps) {
       'blockquote', 'hr', 'table', 'thead', 'tbody', 'tr', 'th', 'td'
     ],
     ALLOWED_ATTR: [
-      'src', 'alt', 'class', 'href', 'target', 'rel', 'width', 'height',
-      'style', 'align', 'border', 'cellpadding', 'cellspacing'
+      'src', 'alt', 'class', 'href', 'target', 'rel', 'width', 'height', 'align', 'border', 'cellpadding', 'cellspacing'
     ],
   });
   
@@ -26,15 +25,7 @@ export function Body({ content, className = '' }: BodyProps) {
   
   return (
     <div 
-      className={`
-        prose prose-lg max-w-none
-        prose-headings:font-bold prose-headings:text-gray-900
-        prose-p:text-gray-700 prose-p:leading-relaxed
-        prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline
-        prose-img:rounded-lg prose-img:shadow-md
-        prose-figcaption:text-sm prose-figcaption:text-gray-500 prose-figcaption:text-center
-        ${className}
-      `}
+      className={`article-body prose prose-lg max-w-none ${className}`}
       dangerouslySetInnerHTML={{ __html: sanitizedContent }}
     />
   );

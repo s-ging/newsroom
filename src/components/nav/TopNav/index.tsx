@@ -7,11 +7,10 @@ import LanguageSelector from './LanguageSelector';
 import DateTimeDisplay from './DateTimeDisplay';
 import ClientLinks from './ClientLinks';
 
-export default function TopNav({ 
+export default function TopNav({
   activeLocale = 'en',
   languages = DEFAULT_LANGUAGES,
   clientLinks = DEFAULT_CLIENT_LINKS,
-  currentDateTime
 }: TopNavProps) {
   
   return (
@@ -34,7 +33,7 @@ export default function TopNav({
           -translate-x-1/2
           whitespace-nowrap
         ">
-          <DateTimeDisplay dateTime={currentDateTime} />
+          <DateTimeDisplay />
         </div>
 
         {/* Right: Client links */}

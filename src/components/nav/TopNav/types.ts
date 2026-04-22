@@ -15,7 +15,6 @@ export interface TopNavProps {
   activeLocale?: Language['code'];
   languages?: Language[];
   clientLinks?: ClientLink[];
-  currentDateTime?: Date; // For SSR/ISR consistency, defaults to now
 }
 
 // Default data with validation guards
