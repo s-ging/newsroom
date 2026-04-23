@@ -116,7 +116,17 @@ function PRCard({ pr, image: initialImage, label }: {
   );
 }
 
-export function BusinessRow({ items }: { items: NewsListItem[] }) {
+export function CategoryRow({
+  title,
+  exploreHref,
+  exploreLabel,
+  items,
+}: {
+  title: string;
+  exploreHref: string;
+  exploreLabel: string;
+  items: NewsListItem[];
+}) {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   if (items.length === 0) return null;
@@ -124,16 +134,16 @@ export function BusinessRow({ items }: { items: NewsListItem[] }) {
   return (
     <section className="mx-auto max-w-[1920px] px-12 py-16">
       <div className="mb-8 flex items-center justify-between">
-        <h2 className="text-3xl font-medium text-black">Business</h2>
-        <a href="#" className="button alt inline-flex items-center px-6 py-2.5">
-          Explore Business
+        <h2 className="text-3xl tracking-tight text-black">{title}</h2>
+        <a href={exploreHref} className="button alt inline-flex items-center px-6 py-2.5">
+          {exploreLabel}
         </a>
       </div>
 
       <div
         ref={scrollRef}
         role="region"
-        aria-label="Business news"
+        aria-label={`${title} news`}
         tabIndex={0}
         className="scrollbar-hide -mx-6 flex items-center gap-6 overflow-x-auto px-6 pb-2"
       >
