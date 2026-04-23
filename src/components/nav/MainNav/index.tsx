@@ -62,7 +62,7 @@ export default function MainNav() {
     <nav className="bg-white border-b border-gray-200 sticky top-0 z-99">
       <div
         className={`mx-auto w-full transition-[max-width,padding] duration-200 ${
-          isScrolled ? 'max-w-[1920px] px-12' : 'max-w-[1920px] px-[60px]'
+          isScrolled ? 'max-w-[1920px] px-4' : 'max-w-[1920px] px-[60px]'
         }`}
       >
 
