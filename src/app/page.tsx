@@ -1,29 +1,27 @@
 import { HomeHero } from '@/components/home/HomeHero';
 import { BusinessRow } from '@/components/home/BusinessRow';
 import { fetchLatestNews, type NewsListItem } from '@/services/news-list';
-import { mockPressRelease } from '@/services/mock-press-release';
-import type { PressReleaseData } from '@/components/press-release/types';
 
 const BUSINESS_ROW_LIMIT = 10;
 
-const heroSlides: PressReleaseData[] = [
-  mockPressRelease,
-  { ...mockPressRelease, id: 900002, headline: 'Featured story 2 (placeholder)' },
-  { ...mockPressRelease, id: 900003, headline: 'Featured story 3 (placeholder)' },
-];
-
+// page.tsx
 export default async function Home() {
   let businessItems: NewsListItem[] = [];
   try {
-    businessItems = await fetchLatestNews(BUSINESS_ROW_LIMIT);
+    businessItems = await fetchLatestNews(20); // fetch more to have enough after filter
   } catch {
     businessItems = [];
   }
 
+  const heroSlides = businessItems
+    .filter(item => item.photo.length > 0)
+    .slice(0, 5);
+
   return (
     <main>
+      <h1 className="sr-only">ACN Newswire Newsroom</h1>
       <HomeHero slides={heroSlides} />
-      <BusinessRow items={businessItems} />
+      <BusinessRow items={businessItems.slice(0, 10)} />
     </main>
   );
 }

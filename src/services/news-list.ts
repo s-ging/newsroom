@@ -15,6 +15,9 @@ export interface NewsListItem {
   sector: string[];
   stock?: Array<{ companyName: string }> | null;
   language?: string | null;
+  summary?: string | null;
+  subHeadline?: string | null;
+  description?: string | null;
 }
 
 interface AcnListPhoto {
@@ -69,5 +72,10 @@ export async function fetchLatestNews(pageSize = 10): Promise<NewsListItem[]> {
     sector: a.sector ?? [],
     stock: a.stock ?? null,
     language: a.language,
+    summary: a.summary ?? null,
+    subHeadline: a.subHeadline ?? null,
+    description: a.description
+      ? a.description.replace(/<[^>]*>/g, '').trim().slice(0, 300)
+      : null,
   }));
 }
