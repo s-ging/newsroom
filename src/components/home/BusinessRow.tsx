@@ -122,7 +122,7 @@ export function BusinessRow({ items }: { items: NewsListItem[] }) {
   if (items.length === 0) return null;
 
   return (
-    <section className="mx-auto max-w-7xl px-6 py-16">
+    <section className="mx-auto max-w-[1920px] px-12 py-16">
       <div className="mb-8 flex items-center justify-between">
         <h2 className="text-3xl font-medium text-black">Business</h2>
         <a href="#" className="button alt inline-flex items-center px-6 py-2.5">
@@ -135,7 +135,7 @@ export function BusinessRow({ items }: { items: NewsListItem[] }) {
         role="region"
         aria-label="Business news"
         tabIndex={0}
-        className="scrollbar-hide -mx-6 flex snap-x items-center gap-6 overflow-x-auto px-6 pb-2"
+        className="scrollbar-hide -mx-6 flex items-center gap-6 overflow-x-auto px-6 pb-2"
       >
         {items.map((pr) => {
           const image = pr.photo?. [0] ?? null;
@@ -145,7 +145,7 @@ export function BusinessRow({ items }: { items: NewsListItem[] }) {
             <Link
               key={pr.id}
               href={`/article/${pr.id}`}
-              className="shrink-0 snap-start self-start"
+              className="shrink-0 self-start"
             >
               <PRCard pr={pr} image={image} label={label} />
             </Link>
@@ -255,28 +255,34 @@ function ShelfScrollBar({
 
   return (
     <div
-      ref={trackRef}
-      role="scrollbar"
-      aria-orientation="horizontal"
-      aria-valuemin={0}
-      aria-valuemax={100}
-      aria-valuenow={percent}
-      onClick={onTrackClick}
-      className="relative mt-4 h-0.5 cursor-pointer bg-neutral-200 transition-[height] duration-150 hover:h-1"
+      style={{ padding: '12px 0', margin: '-12px 0' }}
+      className="group h-4 items-center justify-center origin-center relative mt-4 cursor-grab active:cursor-grabbing"
+      onPointerDown={onThumbPointerDown}
+      onPointerMove={onThumbPointerMove}
+      onPointerUp={onThumbPointerUp}
+      onPointerCancel={onThumbPointerUp}
     >
       <div
-        data-thumb
-        onPointerDown={onThumbPointerDown}
-        onPointerMove={onThumbPointerMove}
-        onPointerUp={onThumbPointerUp}
-        onPointerCancel={onThumbPointerUp}
-        onClick={(e) => e.stopPropagation()}
-        style={{
-          width: `${thumbWidthPct}%`,
-          left: `${thumbLeftPct}%`,
-        }}
-        className="absolute inset-y-0 touch-none cursor-grab bg-black active:cursor-grabbing"
-      />
+        ref={trackRef}
+        role="scrollbar"
+        aria-orientation="horizontal"
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={percent}
+        onClick={onTrackClick}
+        className="relative h-0.5 bg-neutral-200 transition-[height] origin-center duration-150 group-hover:h-1"
+      >
+        <div
+          data-thumb
+          onClick={(e) => e.stopPropagation()}
+          style={{
+            width: `${thumbWidthPct}%`,
+            left: `${thumbLeftPct}%`,
+            transition: dragRef.current ? 'none' : 'left 120ms ease-out',
+          }}
+          className="absolute inset-y-0 touch-none bg-black"
+        />
+      </div>
     </div>
   );
 }

@@ -134,7 +134,7 @@ export function HomeHero({ slides }: { slides: NewsListItem[] }) {
           type="button"
           onClick={() => setIsPaused((p) => !p)}
           aria-label={isPaused ? 'Play slideshow' : 'Pause slideshow'}
-          className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-neutral-300 bg-white text-black transition-all hover:border-neutral-500 hover:bg-neutral-100 active:border-black focus-visible:outline focus-visible:outline-black"
+          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-neutral-300 bg-white text-black transition-all hover:border-neutral-500 hover:bg-neutral-100 active:border-black focus-visible:outline focus-visible:outline-black"
         >
           {isPaused ? (
             // Play triangle
