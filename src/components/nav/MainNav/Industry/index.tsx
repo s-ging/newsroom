@@ -6,7 +6,7 @@ interface IndustryMenuProps {
   onClose?: () => void
 }
 
-// Types and constants - this is a big one
+// Types and constants
 const INDUSTRY_SECTIONS = [
   {
     category: 'Business',

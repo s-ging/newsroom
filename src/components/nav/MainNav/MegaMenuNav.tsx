@@ -10,6 +10,7 @@ import Company from './Company'
 import Region from './Region'
 import Sector from './Sector'
 import Industry from './Industry'
+import Language from './Language'
 
 interface MegaMenuNavProps {
   items?: MegaMenuItem[]
@@ -43,12 +44,20 @@ export default function MegaMenuNav({
     }
   }, [activeMenu, isContainerClosing])
 
-  // Measure height synchronously after render but before paint
+  // Measure height synchronously after render but before paint,
+  // and re-measure whenever the content reflows (e.g. browser zoom, window resize).
   useLayoutEffect(() => {
-    if (shouldRender && contentRef.current && !isContainerClosing) {
-      setMenuHeight(contentRef.current.scrollHeight)
-    }
-  }, [activeMenu, shouldRender, isContainerClosing]) // Re-measure when activeMenu changes
+    if (!shouldRender || !contentRef.current || isContainerClosing) return
+
+    const node = contentRef.current
+    setMenuHeight(node.scrollHeight)
+
+    const observer = new ResizeObserver(() => {
+      setMenuHeight(node.scrollHeight)
+    })
+    observer.observe(node)
+    return () => observer.disconnect()
+  }, [activeMenu, shouldRender, isContainerClosing])
 
   // Handle closing animation
   useEffect(() => {
@@ -110,6 +119,7 @@ export default function MegaMenuNav({
                 {activeMenu === 'region' && <Region onClose={() => onMenuHover?.(null)} />}
                 {activeMenu === 'sector' && <Sector onClose={() => onMenuHover?.(null)} />}
                 {activeMenu === 'industry' && <Industry onClose={() => onMenuHover?.(null)} />}
+                {activeMenu === 'language' && <Language onClose={() => onMenuHover?.(null)} />}
               </div>
             </div>
           </div>
