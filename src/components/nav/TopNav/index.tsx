@@ -6,6 +6,7 @@ import { DEFAULT_LANGUAGES, DEFAULT_CLIENT_LINKS } from './types';
 import LanguageSelector from './LanguageSelector';
 import DateTimeDisplay from './DateTimeDisplay';
 import ClientLinks from './ClientLinks';
+import DateDisplay from './DateDisplay';
 
 export default function TopNav({
   activeLocale = 'en',
@@ -15,7 +16,7 @@ export default function TopNav({
   
   return (
     <section className="top-nav relative z-888">
-      <div className="flex flex-row justify-between items-center min-h-9">
+      <div className="flex flex-row justify-between items-center min-h-7 pt-0.5">
         {/* Left: Language selector */}
         <div className="nav-left flex">
           <LanguageSelector 
@@ -36,9 +37,10 @@ export default function TopNav({
           <DateTimeDisplay />
         </div>
 
-        {/* Right: Client links */}
+        {/* Right: Client links -- temporarily removed */}
         <div className="nav-right ml-auto">
-          <ClientLinks links={clientLinks} />
+          { /* <ClientLinks links={clientLinks} /> -- temporarily removed */ }
+          <DateDisplay />
         </div>
       </div>
     </section>

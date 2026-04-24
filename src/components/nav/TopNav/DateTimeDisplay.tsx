@@ -1,19 +1,36 @@
-// components/nav/TopNav/DateTimeDisplay.tsx
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { Fragment, useEffect, useRef, useState } from 'react'
+
+const ZONES = [
+  { codes: ['IST'], timeZone: 'Asia/Kolkata', offset: '+5:30' },
+  { codes: ['CST'], timeZone: 'Asia/Shanghai', offset: '+7' },
+  { codes: ['SGT', 'HKT'], timeZone: 'Asia/Singapore', offset: '+8' },
+  { codes: ['KST', 'JST'], timeZone: 'Asia/Tokyo', offset: '+9' },
+]
+
+function getZoneInfo(timeZone: string) {
+  const now = new Date()
+  return {
+    day: now.toLocaleString('en-US', { weekday: 'short', timeZone }),
+    time: now.toLocaleString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+      timeZone,
+    }),
+  }
+}
 
 export default function DateTimeDisplay() {
-  const [now, setNow] = useState<Date | null>(null)
+  const [tick, setTick] = useState(0)
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   useEffect(() => {
-    setNow(new Date())
-
     const msToNextMinute = 60_000 - (Date.now() % 60_000)
     const timeout = setTimeout(() => {
-      setNow(new Date())
-      intervalRef.current = setInterval(() => setNow(new Date()), 60_000)
+      setTick(t => t + 1)
+      intervalRef.current = setInterval(() => setTick(t => t + 1), 60_000)
     }, msToNextMinute)
 
     return () => {
@@ -22,50 +39,23 @@ export default function DateTimeDisplay() {
     }
   }, [])
 
-  if (!now) return null
-
-  const datePart = now.toLocaleString('en-US', {
-    weekday: 'short',
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  }).replace(',', '')
-
-  const utc8Time = now.toLocaleString('en-US', {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false,
-    timeZone: 'Asia/Singapore'
-  })
-
-  const jstTime = now.toLocaleString('en-US', {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false,
-    timeZone: 'Asia/Tokyo'
-  })
-
-  const timezones = [
-    { code: 'SGT', time: utc8Time, offset: '+8' },
-    { code: 'HKT', time: utc8Time, offset: '+8' },
-    { code: 'JST', time: jstTime, offset: '+9' }
-  ]
-
   return (
-    <p className="flex flex-row nav-middle-text m-0 text-sm">
-      <span className="date-part">{datePart}</span>
-      <span className="separator"></span>
-
-      {timezones.map((tz, index) => (
-        <span key={tz.code} className="timezone-item flex flex-row">
-          <span className="time">{tz.time}</span>
-          <span className="code ml-1">{tz.code}</span>
-          <span className="offset text-gray-400 ml-1">(UTC{tz.offset})</span>
-          {index < timezones.length - 1 && (
-            <span className="separator"></span>
-          )}
-        </span>
-      ))}
+    <p className="flex flex-row items-center gap-3 m-0 text-xs text-gray-400">
+      {ZONES.map((zone, index) => {
+        const { day, time } = getZoneInfo(zone.timeZone)
+        return (
+          <Fragment key={zone.codes.join('/')}>
+            <span className="flex items-center gap-1">
+              <span>{zone.codes.join('/')}</span>
+              <span>{day}</span>
+              <span>{time}</span>
+            </span>
+            {index < ZONES.length - 1 && (
+              <span className="text-gray-300" aria-hidden="true">|</span>
+            )}
+          </Fragment>
+        )
+      })}
     </p>
   )
 }

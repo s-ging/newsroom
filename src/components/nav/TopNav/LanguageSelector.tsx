@@ -57,7 +57,7 @@ export default function LanguageSelector({
     >
       <button 
         onClick={() => setIsOpen(!isOpen)}
-        className="flex flex-row items-center gap-2 hover:text-gray-900 border-0 bg-transparent"
+        className="flex flex-row items-center gap-2 hover:text-gray-900 border-0 bg-transparent text-xs leading-0.5"
         aria-expanded={isOpen}
         aria-haspopup="true"
         type="button"

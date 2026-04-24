@@ -27,6 +27,11 @@ const REGIONS = [
         name: 'Southeast Asia',
         countries: ['Indonesia', 'Malaysia', 'Philippines', 'Singapore', 'Thailand', 'Vietnam']
       },
+    ]
+  },
+    {
+    continent: 'Greater Asia',
+    subRegions: [
       {
         name: 'Australasia',
         countries: ['Australia', 'New Zealand']
@@ -101,7 +106,7 @@ const REGIONS = [
 
 export default function RegionMenu({ onClose }: RegionMenuProps) {
   return (
-        <div className="grid grid-cols-5 gap-6">
+        <div className="grid grid-cols-6 gap-6">
           {REGIONS.map((region) => (
             <div key={region.continent} className="dropdown-menu-section">
               <div className="flex flex-col">

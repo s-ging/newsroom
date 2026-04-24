@@ -13,6 +13,7 @@ const SECTORS = [
   { name: 'Cryptocurrency', href: '/sector/cryptocurrency' },
   { name: 'Finance', href: '/sector/finance' },
   { name: 'Healthcare', href: '/sector/healthcare' },
+  { name: 'Industry', href: '/sector/industry' },
   { name: 'Lifestyle', href: '/sector/lifestyle' },
   { name: 'Technology', href: '/sector/technology' },
 ]
@@ -20,7 +21,7 @@ const SECTORS = [
 
 export default function SectorMenu({ onClose }: SectorMenuProps) {
   return (
-        <div className="flex flex-wrap justify-center gap-x-8 gap-y-4">
+        <div className="flex flex-wrap justify-between gap-x-8 gap-y-4">
           {SECTORS.map((sector) => (
             <div key={sector.name} className="dropdown-menu-section">
               <p className="megamenu-title">
