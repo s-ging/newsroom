@@ -12,6 +12,7 @@ export function HomeHero({ slides }: { slides: NewsListItem[] }) {
   const [enableTransition, setEnableTransition] = useState(true);
   const [isPaused, setIsPaused] = useState(false);
   const activeRef = useRef(0);
+  const isPausedRef = useRef(false);
 
   const count = slides.length;
   const displayActive = count > 0 ? active % count : 0;
@@ -28,7 +29,7 @@ export function HomeHero({ slides }: { slides: NewsListItem[] }) {
     if (count <= 1) return;
 
     const advance = () => {
-      if (isPaused) return;
+      if (isPausedRef.current) return;
       setEnableTransition(true);
       setActiveSync ((i) => i + 1);
     };
@@ -132,7 +133,7 @@ export function HomeHero({ slides }: { slides: NewsListItem[] }) {
         {/* play/pause button — 24px icon in a circle, sits as natural 4th column */}
         <button
           type="button"
-          onClick={() => setIsPaused((p) => !p)}
+          onClick={() => setIsPaused((p) => { isPausedRef.current = !p; return !p; })}
           aria-label={isPaused ? 'Play slideshow' : 'Pause slideshow'}
           className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-neutral-300 bg-white text-black transition-all hover:border-neutral-500 hover:bg-neutral-100 active:border-black focus-visible:outline focus-visible:outline-black"
         >
