@@ -67,7 +67,10 @@ export default function MainNav() {
       >
 
         <div className="flex flex-row items-center h-16 lg:flex-col lg:h-auto">
-          <div className="flex flex-row justify-between gap-4 py-3 w-full">
+          <div
+            className="flex flex-row justify-between gap-4 py-3 w-full"
+            onMouseEnter={() => { if (activeMegaMenu) closeMenu() }}
+          >
             {/* Logo - always visible */}
             <Link href="/" className="flex-shrink-0" aria-label="ACN Newswire homepage">
               <Image
