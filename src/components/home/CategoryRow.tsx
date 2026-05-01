@@ -49,19 +49,19 @@ function PRCard({ pr, image: initialImage, label }: {
 
     if (isPortrait) {
       const computedWidth = (w / h) * 320;
-      const clampedWidth = clamp(computedWidth, 215, 320);
+      const clampedWidth = clamp(computedWidth, 200, 280);
       setImgStyle({ width: `${clampedWidth}px`, height: "320px" });
     } else if (isLandscape) {
-      setImgStyle({ width: "320px", height: "auto" });
-    } else {
       setImgStyle({ width: "250px", height: "auto" });
+    } else {
+      setImgStyle({ width: "200px", height: "auto" });
     }
   }, [isLogo]);
 
   // Logo gets a fixed 250x250 container, press photo gets the dynamic one
   const containerStyle = isLogo
-    ? { width: "250px", height: "320px" }
-    : { height: "320px", width: imgStyle.width, minWidth: "215px", maxWidth: "320px" };
+    ? { width: "200px", height: "320px" }
+    : { height: "320px", width: imgStyle.width, minWidth: "200px", maxWidth: "320px" };
 
   const containerClass = isLogo
     ? "mb-4 flex items-center justify-center overflow-hidden p-6"
@@ -103,8 +103,8 @@ function PRCard({ pr, image: initialImage, label }: {
         )}
       </div>
 
-      <div className="overflow-hidden" style={{ height: "220px", width: containerStyle.width }}>
-        <h3 className="mb-3 text-base font-medium leading-snug text-black">
+      <div className="overflow-hidden" style={{ height: "250px", width: containerStyle.width }}>
+        <h3 className="mb-3 text-base leading-snug text-black">
           {pr.headline}
         </h3>
         <p className="mb-2 text-xs font-semibold text-gray-500">
