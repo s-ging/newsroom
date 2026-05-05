@@ -62,12 +62,12 @@ export function Hero({
         <LogoMark src={logo || ''} alt={companyName} />
       </div>
 
-      <h1 className="mb-8 text-3xl md:text-4xl lg:text-5xl font-semibold text-gray-900 leading-tight">
+      <h1 className="mb-8 text-3xl md:text-4xl lg:text-5xl text-gray-900 leading-tight">
         {headline}
       </h1>
 
       {subHeadline && (
-        <p className="mt-4 mb-8 text-lg md:text-xl text-gray-400 font-medium leading-relaxed">
+        <p className="mt-4 mb-8 text-lg md:text-xl text-gray-400 leading-relaxed">
           {subHeadline}
         </p>
       )}

@@ -4,6 +4,7 @@ import { Body } from './Body';
 import { Company } from './Company';
 import { ArticleMeta } from './ArticleMeta';
 import { ArticleFooterLink } from './ArticleFooterLink';
+import { ShareBar } from './ShareBar';
 import type { PressReleaseData } from './types';
 
 interface PressReleaseProps {
@@ -24,6 +25,8 @@ export function PressRelease({ data, className = '' }: PressReleaseProps) {
         sectors={data.sector}
         source={data.source}
       />
+
+      <ShareBar headline={data.headline} />
 
       <Body content={data.bodyHtml} />
 

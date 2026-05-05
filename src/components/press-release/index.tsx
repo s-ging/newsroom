@@ -7,3 +7,4 @@ export { Body } from './Body';
 export { Company } from './Company';
 export { ArticleMeta } from './ArticleMeta';
 export { ArticleFooterLink } from './ArticleFooterLink';
+export { ShareBar } from './ShareBar';
