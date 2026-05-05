@@ -1,7 +1,7 @@
 // app/article/[...segments]/page.tsx
 import { redirect, notFound } from 'next/navigation';
 import { isRedirectError } from 'next/dist/client/components/redirect-error';
-import { PressRelease } from '@/components/press-release';
+import { PressRelease, InfiniteArticleFeed } from '@/components/press-release';
 import { fetchPressRelease } from '@/services/press-release';
 import { fetchCompanyArticles } from '@/services/company-articles';
 import { headlineToSlug, languageToSlug } from '@/services/acn-adapter';
@@ -20,7 +20,12 @@ export default async function ArticlePage({ params }: Props) {
   if (segments.length === 1) {
     [id] = segments;
   } else if (segments.length === 2) {
-    [lang, id] = segments;
+    // could be [id, slug] or [lang, id]
+    if (!isNaN(Number(segments[0]))) {
+      [id, slug] = segments;   // numeric first = id/slug
+    } else {
+      [lang, id] = segments;   // non-numeric first = lang/id
+    }
   } else {
     [lang, id, slug] = segments;
   }
@@ -43,6 +48,7 @@ export default async function ArticlePage({ params }: Props) {
     return (
       <main>
         <PressRelease data={data} relatedArticles={relatedArticles} />
+        <InfiniteArticleFeed firstId={data.id} />
       </main>
     );
   } catch (e) {

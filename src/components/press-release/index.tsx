@@ -9,3 +9,4 @@ export { ArticleMeta } from './ArticleMeta';
 export { ArticleFooterLink } from './ArticleFooterLink';
 export { ShareBar } from './ShareBar';
 export { MoreFromCompany } from './MoreFromCompany';
+export { InfiniteArticleFeed } from './InfiniteArticleFeed';
