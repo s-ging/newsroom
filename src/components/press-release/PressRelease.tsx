@@ -5,14 +5,17 @@ import { Company } from './Company';
 import { ArticleMeta } from './ArticleMeta';
 import { ArticleFooterLink } from './ArticleFooterLink';
 import { ShareBar } from './ShareBar';
+import { MoreFromCompany } from './MoreFromCompany';
 import type { PressReleaseData } from './types';
+import type { CompanyArticle } from '@/services/company-articles';
 
 interface PressReleaseProps {
   data: PressReleaseData;
+  relatedArticles?: CompanyArticle[];
   className?: string;
 }
 
-export function PressRelease({ data, className = '' }: PressReleaseProps) {
+export function PressRelease({ data, relatedArticles = [], className = '' }: PressReleaseProps) {
   const company = data.companies?.[0];
 
   return (
@@ -39,6 +42,15 @@ export function PressRelease({ data, className = '' }: PressReleaseProps) {
       />
 
       <ArticleFooterLink views={data.views} />
+
+      {company && (
+        <MoreFromCompany
+          articles={relatedArticles}
+          companyName={company.company_Name}
+          logoSrc={company.logofilename ?? null}
+          currentId={data.id}
+        />
+      )}
     </article>
   );
 }

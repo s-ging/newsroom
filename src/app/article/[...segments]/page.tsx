@@ -3,6 +3,7 @@ import { redirect, notFound } from 'next/navigation';
 import { isRedirectError } from 'next/dist/client/components/redirect-error';
 import { PressRelease } from '@/components/press-release';
 import { fetchPressRelease } from '@/services/press-release';
+import { fetchCompanyArticles } from '@/services/company-articles';
 import { headlineToSlug, languageToSlug } from '@/services/acn-adapter';
 
 type Props = {
@@ -36,9 +37,12 @@ export default async function ArticlePage({ params }: Props) {
       redirect(`/article/${correctLang}/${id}/${correctSlug}`);
     }
 
+    // Fetch related articles after the redirect check — compId is only known from data
+    const relatedArticles = await fetchCompanyArticles(data.companies?.[0]?.comp_ID);
+
     return (
       <main>
-        <PressRelease data={data} />
+        <PressRelease data={data} relatedArticles={relatedArticles} />
       </main>
     );
   } catch (e) {

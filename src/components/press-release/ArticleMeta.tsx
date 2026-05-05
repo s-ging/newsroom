@@ -1,4 +1,6 @@
 // press-release/ArticleMeta.tsx
+import Link from 'next/link';
+
 interface ArticleMetaProps {
   topic?: string;
   sectors?: string[];
@@ -33,7 +35,19 @@ export function ArticleMeta({
       <Row label="Country" value={country} />
       {source && <Row label="Source" value={source} />}
       {sectors && sectors.length > 0 && (
-        <Row label="Sectors" value={sectors.join(', ')} />
+        <div className="flex gap-2">
+          <dt className="text-gray-600">Sectors:</dt>
+          <dd className="font-semibold text-gray-900">
+            {sectors.map((s, i) => (
+              <span key={s}>
+                <Link href={`/search?sector=${encodeURIComponent(s)}`} className="hover:underline">
+                  {s}
+                </Link>
+                {i < sectors.length - 1 && ', '}
+              </span>
+            ))}
+          </dd>
+        </div>
       )}
     </dl>
   );

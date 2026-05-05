@@ -1,0 +1,81 @@
+// press-release/MoreFromCompany.tsx
+import Link from 'next/link';
+import { formatDateTime } from '@/lib/utils';
+
+import type { CompanyArticle } from '@/services/company-articles';
+
+interface Props {
+  articles: CompanyArticle[];
+  companyName: string;
+  logoSrc: string | null;
+  currentId: number;
+}
+
+export function MoreFromCompany({ articles, companyName, logoSrc, currentId }: Props) {
+  const visible = articles.filter((a) => a.id !== currentId).slice(0, 3);
+  if (visible.length === 0) return null;
+
+  return (
+    <section className="mt-8 pt-6">
+      <h2 className="text-3xl text-black tracking-tight mb-4">
+        More from {companyName}
+      </h2>
+      <ul>
+        {visible.map((article) => (
+          <li key={article.id}>
+            <Link
+              href={`/article/${article.id}`}
+              className="flex items-stretch gap-0 py-4 group"
+            >
+              {/* Logo column */}
+              <div className="w-28 shrink-0 flex items-center justify-center p-3">
+                {logoSrc ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={logoSrc}
+                    alt={companyName}
+                    loading="lazy"
+                    className="max-w-full max-h-16 w-auto h-auto object-contain"
+                  />
+                ) : (
+                  <div className="w-16 h-16 bg-gray-100 rounded" />
+                )}
+              </div>
+
+              {/* Divider */}
+              <div className="w-px bg-gray-200 shrink-0 self-stretch mx-1" />
+
+              {/* Content */}
+              <div className="flex-1 min-w-0 px-4 flex flex-col justify-center gap-1">
+                <h3 className="text-md text-gray-900 leading-snug line-clamp-1 group-hover:text-[#2088c9] transition-colors">
+                  {article.headline}
+                </h3>
+                <p className="text-xs text-gray-400 mt-0.5">
+                  {formatDateTime(article.dateTime)}
+                </p>
+                {article.description && (
+                  <p className="text-xs text-gray-500 line-clamp-2">
+                    {article.description}
+                  </p>
+                )}
+              </div>
+
+              {/* Press photo — only if the article has an image */}
+              {article.thumbImage && (
+                <div className="shrink-0 ml-4 self-center">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={article.thumbImage}
+                    alt={article.headline}
+                    loading="lazy"
+                    className="w-20 h-20 object-cover rounded"
+                  />
+                </div>
+              )}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
