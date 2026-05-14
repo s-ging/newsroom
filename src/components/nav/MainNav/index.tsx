@@ -109,10 +109,10 @@ export default function MainNav() {
             <div className="hidden lg:flex items-center gap-1 self-center">
               {NAV_ITEMS.map((item) => {
                 if (item.label === 'Login') {
-                  return <Link key={item.href} href={item.href} className="nav-button alt mr-1.5">{item.label}</Link>
+                  return <Link key={item.href} href={item.href} className="nav-link">{item.label}</Link>
                 }
                 if (item.label === 'Register') {
-                  return <Link key={item.href} href={item.href} className="nav-button">{item.label}</Link>
+                  return <Link key={item.href} href={item.href} className="nav-link">{item.label}</Link>
                 }
                 return (
                   <Link
@@ -280,7 +280,7 @@ export default function MainNav() {
               isContainerClosing ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'
             }`}
           >
-            <button onClick={closeMenu} className="flex flex-row justify-between nav-button alt opacity-60 w-32">
+            <button onClick={closeMenu} className="button alt flex gap-3">
               <span className="font-bold">✕</span> Close Menu
             </button>
           </div>

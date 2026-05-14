@@ -13,7 +13,6 @@ import {
 import type { NewsListItem } from '@/services/news-list';
 import { formatDateTime } from '@/lib/utils';
 
-const clamp = (val: number, min: number, max: number) => Math.min(Math.max(val, min), max);
 
 function PRCard({ pr, image: initialImage, label }: {
   pr: NewsListItem;
@@ -23,7 +22,7 @@ function PRCard({ pr, image: initialImage, label }: {
   const [image, setImage] = useState<string | null>(initialImage);
   const [isLogo, setIsLogo] = useState(!initialImage); // no photo = it'll be a logo
   const [imgStyle, setImgStyle] = useState<React.CSSProperties>({
-    width: "250px",
+    width: "200px",
     height: "auto",
   });
 
@@ -44,27 +43,22 @@ function PRCard({ pr, image: initialImage, label }: {
   const handleLoad = useCallback((e: React.SyntheticEvent<HTMLImageElement>) => {
     if (isLogo) return;
     const { naturalWidth: w, naturalHeight: h } = e.currentTarget;
-    const isPortrait = h > w;
-    const isLandscape = w > h;
-
-    if (isPortrait) {
-      const computedWidth = (w / h) * 320;
-      const clampedWidth = clamp(computedWidth, 200, 280);
-      setImgStyle({ width: `${clampedWidth}px`, height: "320px" });
-    } else if (isLandscape) {
-      setImgStyle({ width: "250px", height: "auto" });
-    } else {
+    if (w >= h) {
+      // landscape/square — pin width to 200px, height scales freely
       setImgStyle({ width: "200px", height: "auto" });
+    } else {
+      // portrait — pin height to 200px, width scales proportionally
+      setImgStyle({ width: `${Math.round((w / h) * 200)}px`, height: "200px" });
     }
   }, [isLogo]);
 
-  // Logo gets a fixed 250x250 container, press photo gets the dynamic one
+  // all containers are 200px tall; width follows the image
   const containerStyle = isLogo
-    ? { width: "200px", height: "320px" }
-    : { height: "320px", width: imgStyle.width, minWidth: "200px", maxWidth: "320px" };
+    ? { width: "160px", height: "200px" }
+    : { height: "200px", width: imgStyle.width };
 
   const containerClass = isLogo
-    ? "mb-4 flex items-center justify-center overflow-hidden p-6"
+    ? "mb-4 flex items-start justify-center overflow-hidden p-6"
     : "mb-4 flex items-end overflow-hidden";
 
   return (
@@ -74,15 +68,15 @@ function PRCard({ pr, image: initialImage, label }: {
           isLogo ? (
             // no press photo — show white mat box with logo inside
             <div
-              className="flex items-end justify-center bg-white"
-              style={{ width: "250px", height: "250px" }}
+              className="flex items-center justify-center bg-white"
+              style={{ width: "200px", height: "200px" }}
             >
               <img
                 src={image}
                 alt={label}
                 loading="lazy"
-                style={{ maxWidth: "100%", maxHeight: "100%", width: "auto", height: "auto" }}
-                className="block p-4"
+                style={{ maxWidth: "120px", maxHeight: "120px", width: "auto", height: "auto" }}
+                className="block"
               />
             </div>
           ) : (
@@ -99,7 +93,7 @@ function PRCard({ pr, image: initialImage, label }: {
           )
         ) : (
           // nothing at all — empty grey box
-          <div style={{ width: "250px", height: "250px" }} />
+          <div style={{ width: "200px", height: "200px" }} />
         )}
       </div>
 

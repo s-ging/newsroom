@@ -43,17 +43,21 @@ body {
 
 .button {
   color: #FFFFFF;
-  background-color: #000000;
+  background-color: #333333;
   font-size: 14px;
-  padding: 8px 24px;
-  border-radius: 9999px;
-
+  padding: 6px 18px;
+  /*border-radius: 9999px;*/
 }
 
 .button.alt {
   color: #000000;
-  background-color: #FFFFFF;
-  box-shadow: inset 0 0 0 1px black;
+  background-color: #EEEEEE;
+  /*box-shadow: inset 0 0 0 1px black;*/
+  transition: all 0.08s ease-in-out;
+}
+
+.button.alt:hover {
+  background-color: #BBBBBB;
 }
 
 @keyframes fadeSlideUp {
