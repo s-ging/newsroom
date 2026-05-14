@@ -47,8 +47,13 @@ export default async function ArticlePage({ params }: Props) {
 
     return (
       <main>
-        <PressRelease data={data} relatedArticles={relatedArticles} />
-        <InfiniteArticleFeed firstId={data.id} />
+        <div id="article-first-wrapper">
+          <PressRelease data={data} relatedArticles={relatedArticles} />
+        </div>
+        <InfiniteArticleFeed
+          firstId={data.id}
+          firstArticle={{ id: data.id, lang: correctLang, slug: correctSlug }}
+        />
       </main>
     );
   } catch (e) {
