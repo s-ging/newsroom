@@ -27,6 +27,7 @@ export function PressRelease({ data, relatedArticles = [], className = '' }: Pre
         subHeadline={data.subHeadline}
         sectors={data.sector}
         source={data.source}
+        dateTime={data.dateTime}
       />
 
       <ShareBar headline={data.headline} />

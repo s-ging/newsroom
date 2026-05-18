@@ -53,7 +53,7 @@ export function ShareBar({ headline }: ShareBarProps) {
   };
 
   const btnClass =
-    'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 transition-colors';
+    'inline-flex items-center gap-1.5 mr-2 text-xs font-medium text-gray-400 hover:text-gray-800 transition-colors duration-180';
 
   return (
     <div className="flex flex-wrap gap-2 my-6">

@@ -11,6 +11,7 @@ interface HeroProps {
   subHeadline?: string | null;
   sectors?: string[];
   source?: string;
+  dateTime?: string | null;
   className?: string;
 }
 
@@ -46,6 +47,7 @@ export function Hero({
   subHeadline,
   sectors,
   source,
+  dateTime,
   className = '',
 }: HeroProps) {
   const tagParts: string[] = [];
@@ -54,6 +56,14 @@ export function Hero({
   }
   if (source) {
     tagParts.push(`Source: ${source}`);
+  }
+  if (dateTime) {
+    const formatted = new Date(dateTime).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+    tagParts.push(formatted);
   }
 
   return (
