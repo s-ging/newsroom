@@ -10,7 +10,7 @@ interface Props {
   article: CompanyArticle;
   companyName: string;
   logoSrc: string | null;
-  sectors: string[] | null;
+  sectors?: string[] | null;
   showMeta?: boolean;
   hideLogo?: boolean;
 }
