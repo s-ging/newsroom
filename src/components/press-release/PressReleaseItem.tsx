@@ -1,5 +1,7 @@
-// press-release/PressReleaseItem.tsx
+'use client';
+
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 import { formatDateTime } from '@/lib/utils';
 
 import type { CompanyArticle } from '@/services/company-articles';
@@ -10,28 +12,43 @@ interface Props {
   logoSrc: string | null;
   sectors: string[] | null;
   showMeta?: boolean;
+  hideLogo?: boolean;
 }
 
-export function PressReleaseItem({ article, companyName, logoSrc, sectors, showMeta }: Props) {
+export function PressReleaseItem({ article, companyName, logoSrc: initialLogoSrc, sectors, showMeta, hideLogo }: Props) {
+  const [logoSrc, setLogoSrc] = useState<string | null>(initialLogoSrc);
+
+  useEffect(() => {
+    if (hideLogo || initialLogoSrc || article.thumbImage) return;
+    let mounted = true;
+    fetch(`/api/press-release/${article.id}`)
+      .then(r => r.json())
+      .then(data => {
+        if (mounted && data?.companies?.[0]?.logofilename) {
+          setLogoSrc(data.companies[0].logofilename);
+        }
+      })
+      .catch(() => {});
+    return () => { mounted = false; };
+  }, [article.id, article.thumbImage, initialLogoSrc]);
+
   return (
     <Link
       href={`/article/${article.id}`}
       className="flex items-stretch gap-0 py-4 group"
     >
       {/* Logo column */}
-      <div className="w-28 shrink-0 flex items-center justify-center p-3">
-        {logoSrc ? (
-          // eslint-disable-next-line @next/next/no-img-element
+      {!hideLogo && logoSrc && (
+        <div className="w-28 shrink-0 flex items-center justify-center p-3">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={logoSrc}
             alt={companyName}
             loading="lazy"
             className="max-w-full max-h-16 w-auto h-auto object-contain"
           />
-        ) : (
-          <div className="w-16 h-16 bg-gray-100 rounded" />
-        )}
-      </div>
+        </div>
+      )}
 
       {/* Divider */}
       <div className="w-px bg-gray-200 shrink-0 self-stretch mx-1" />
@@ -76,7 +93,7 @@ export function PressReleaseItem({ article, companyName, logoSrc, sectors, showM
             src={article.thumbImage}
             alt={article.headline}
             loading="lazy"
-            className="w-20 h-20 object-cover rounded"
+            className="w-20 h-20 object-cover"
           />
         </div>
       )}

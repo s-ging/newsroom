@@ -8,14 +8,15 @@ interface SectorMenuProps {
 
 // Types and constants
 const SECTORS = [
-  { name: 'Business', href: '/sector/business' },
-  { name: 'Communications', href: '/sector/communications' },
-  { name: 'Cryptocurrency', href: '/sector/cryptocurrency' },
-  { name: 'Finance', href: '/sector/finance' },
-  { name: 'Healthcare', href: '/sector/healthcare' },
-  { name: 'Industry', href: '/sector/industry' },
-  { name: 'Lifestyle', href: '/sector/lifestyle' },
-  { name: 'Technology', href: '/sector/technology' },
+  { name: 'Business', href: '/search?sec=Business' },
+  { name: 'Communications', href: '/search?sec=Communications' },
+  { name: 'Cryptocurrency', href: '/search?sec=Cryptocurrency' },
+  { name: 'Environment', href: '/search?sec=Environment' },
+  { name: 'Finance', href: '/search?sec=Finance' },
+  { name: 'Healthcare', href: '/search?sec=Healthcare' },
+  { name: 'Industry', href: '/search?sec=Industry' },
+  { name: 'Lifestyle', href: '/search?sec=Lifestyle' },
+  { name: 'Technology', href: '/search?sec=Technology' },
 ]
 
 

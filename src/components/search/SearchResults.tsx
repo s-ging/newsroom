@@ -2,6 +2,7 @@ import { PressReleaseItem } from '@/components/press-release/PressReleaseItem';
 import { getArticleCategories } from '@/lib/sector-mapper';
 import { getSectorDisplayName } from '@/services/search';
 import type { SearchResult } from '@/services/search';
+import { Pagination } from './Pagination';
 
 interface SearchResultsProps {
   results: SearchResult[];
@@ -15,8 +16,10 @@ export function SearchResults({
   results,
   totalResults,
   query,
-  // currentPage and limit reserved for pagination
+  currentPage,
+  limit,
 }: SearchResultsProps) {
+  const totalPages = Math.ceil(totalResults / limit);
   return (
     <div>
       <p className="text-sm text-gray-500 mb-2">
@@ -41,7 +44,7 @@ export function SearchResults({
           </p>
         </div>
       ) : (
-        <ul className="divide-y divide-gray-100">
+        <ul className="divide-y divide-gray-200">
           {results.map((article) => {
             const displayCategories = getArticleCategories(article.sectors).map(
               getSectorDisplayName,
@@ -61,16 +64,7 @@ export function SearchResults({
         </ul>
       )}
 
-      {/* Pagination — structure ready */}
-      {/* const totalPages = Math.ceil(totalResults / limit); */}
-      {/* <div className="flex justify-between items-center mt-6"> */}
-      {/*   {currentPage > 1 && ( */}
-      {/*     <a href={buildUrl({ page: currentPage - 1 })} className="button alt">Previous</a> */}
-      {/*   )} */}
-      {/*   {currentPage < totalPages && ( */}
-      {/*     <a href={buildUrl({ page: currentPage + 1 })} className="button">Next</a> */}
-      {/*   )} */}
-      {/* </div> */}
+      <Pagination currentPage={currentPage} totalPages={totalPages} />
     </div>
   );
 }

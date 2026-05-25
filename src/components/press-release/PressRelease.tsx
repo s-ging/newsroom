@@ -48,6 +48,7 @@ export function PressRelease({ data, relatedArticles = [], className = '' }: Pre
         <MoreFromCompany
           articles={relatedArticles}
           companyName={company.company_Name}
+          companyId={company.comp_ID}
           logoSrc={company.logofilename ?? null}
           currentId={data.id}
         />

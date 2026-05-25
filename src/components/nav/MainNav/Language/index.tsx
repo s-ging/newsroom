@@ -8,11 +8,11 @@ interface LanguageMenuProps {
 
 // Types and constants
 const LANGUAGES = [
-  { name: 'English • EN', href: '/language/english' },
-  { name: 'Traditional Chinese • 繁體中文	', href: '/language/traditional-chinese' },
-  { name: 'Simplified Chinese • 简体中文', href: '/language/simplified-chinese' },
-  { name: 'Japanese • 日本語', href: '/language/japanese' },
-  { name: 'Korean • 한국어', href: '/language/korean' },
+  { name: 'English • EN', href: '/search?lang=en' },
+  { name: 'Traditional Chinese • 繁體中文	', href: '/search?lang=zh-Hant' },
+  { name: 'Simplified Chinese • 简体中文', href: '/search?lang=zh-Hans' },
+  { name: 'Japanese • 日本語', href: '/search?lang=ja' },
+  { name: 'Korean • 한국어', href: '/search?lang=ko' },
 ]
 
 

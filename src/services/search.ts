@@ -1,5 +1,15 @@
 import articles from '@/data/prefetched-articles.json';
 import { getArticleCategories } from '@/lib/sector-mapper';
+import { getCountryInfo } from '@/lib/countries';
+import { INDUSTRY_HIERARCHY, REGION_LEAF_COUNTRIES } from '@/lib/filter-data';
+
+const LANGUAGE_CODE_TO_RAW: Record<string, string[]> = {
+  en: ['English'],
+  ja: ['Japanese'],
+  ko: ['Korean'],
+  'zh-Hant': ['Traditional Chinese', 'zh-Hant'],
+  'zh-Hans': ['Simplified Chinese', 'zh-Hans'],
+};
 
 // Sidebar display names → actual sector_type values used by getArticleCategories()
 const DISPLAY_TO_TYPE: Record<string, string> = {
@@ -9,6 +19,10 @@ const DISPLAY_TO_TYPE: Record<string, string> = {
   Industry: 'Industrial',
   Environment: 'Sustainability',
 };
+
+// Parent display names in the sidebar hierarchy (e.g. 'Technology', 'Communications')
+// Used to distinguish category-level selections from exact subsector selections
+const PARENT_SECTOR_IDS = new Set(INDUSTRY_HIERARCHY.map((item) => item.id));
 
 // Sector_type values → sidebar display names (for badges)
 const TYPE_TO_DISPLAY: Record<string, string> = {
@@ -53,15 +67,24 @@ export interface SearchResult {
   sectors: string[];
 }
 
-export function searchArticles(
-  q: string,
-  activeSectors: string[],
-  page: number,
-  limit: number,
-): { articles: SearchResult[]; total: number } {
+export function searchArticles({
+  q,
+  sectors,
+  languages,
+  regions,
+  page,
+  limit,
+}: {
+  q: string;
+  sectors: string[];
+  languages: string[];
+  regions: string[];
+  page: number;
+  limit: number;
+}): { articles: SearchResult[]; total: number } {
   const raw = articles as unknown as PrefetchedArticle[];
   const qLower = q.toLowerCase();
-  const sectorTypes = activeSectors.map((s) => DISPLAY_TO_TYPE[s] ?? s);
+  const rawLanguages = languages.flatMap((code) => LANGUAGE_CODE_TO_RAW[code] ?? []);
 
   const filtered = raw.filter((article) => {
     const matchesQuery =
@@ -69,11 +92,36 @@ export function searchArticles(
       article.headline.toLowerCase().includes(qLower) ||
       (article.summary ?? '').toLowerCase().includes(qLower);
 
+    // Parent display names (e.g. ?sec=Technology from nav links) → category-level match.
+    // Exact subsector names (e.g. ?sec=Advertising from sidebar) → exact article.sectors match.
     const matchesSector =
-      sectorTypes.length === 0 ||
-      getArticleCategories(article.sectors).some((cat) => sectorTypes.includes(cat));
+      sectors.length === 0 ||
+      sectors.some((s) => {
+        if (PARENT_SECTOR_IDS.has(s)) {
+          const sectorType = DISPLAY_TO_TYPE[s] ?? s;
+          return getArticleCategories(article.sectors).includes(sectorType);
+        }
+        return (article.sectors ?? []).includes(s);
+      });
 
-    return matchesQuery && matchesSector;
+    const matchesLanguage =
+      rawLanguages.length === 0 || rawLanguages.includes(article.rawLanguage);
+
+    const articleLocation = article.location ?? '';
+    const countryInfo = getCountryInfo(articleLocation);
+    const matchesRegion =
+      regions.length === 0 ||
+      regions.some((reg) => {
+        if (reg === articleLocation) return true;                       // exact country
+        if (countryInfo) {
+          if (reg === countryInfo.continent) return true;               // continent (Asia, Europe…)
+          if (reg === countryInfo.region) return true;                  // sub-region (East Asia…)
+        }
+        const leaves = REGION_LEAF_COUNTRIES[reg];                     // hierarchy expansion
+        return leaves ? leaves.includes(articleLocation) : false;
+      });
+
+    return matchesQuery && matchesSector && matchesLanguage && matchesRegion;
   });
 
   const total = filtered.length;

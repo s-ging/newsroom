@@ -123,7 +123,7 @@ export default function RegionMenu({ onClose }: RegionMenuProps) {
                       {subRegion.countries.map((country) => (
                         <Link
                           key={country}
-                          href={`/region/${country.toLowerCase().replace(/\s+/g, '-')}`}
+                          href={`/search?reg=${encodeURIComponent(country)}`}
                           className="block dropdown-link"
                           onClick={onClose}
                         >

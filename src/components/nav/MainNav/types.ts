@@ -32,5 +32,5 @@ export const DEFAULT_MEGA_MENU_ITEMS: MegaMenuItem[] = [
   { label: 'Sector', href: '#', hasDropdown: true, megaMenuContent: 'sector' },
   { label: 'Industry', href: '#', hasDropdown: true, megaMenuContent: 'industry' },
   { label: 'Language', href: '#', hasDropdown: true, megaMenuContent: 'language'},
-  { label: 'Events', href: '#' },
+  { label: 'Events', href: '/events' },
 ]
