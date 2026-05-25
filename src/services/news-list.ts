@@ -45,6 +45,39 @@ interface AcnListArticle {
   stock?: Array<{ companyName: string }> | null;
 }
 
+export async function fetchNewsList(page = 1, limit = 20): Promise<NewsListItem[]> {
+  const res = await fetch(
+    `${API_BASE}/api/v1/News/GetNewsByLanguage?langType=0&pageNumber=${page}&pageSize=${limit}`,
+    {
+      next: { revalidate: 3600 },
+      headers: { Accept: 'application/json' },
+    },
+  );
+
+  if (!res.ok) return [];
+
+  const raw: AcnListArticle[] = await res.json();
+
+  return raw.map((a) => ({
+    id: a.id,
+    headline: a.headline ?? '',
+    dateTime: a.dateTime ?? '',
+    source: a.source ?? '',
+    url: a.url ?? '',
+    photo: (a.photo ?? [])
+      .map((p) => p.thumbImage ?? p.bigImage ?? null)
+      .filter((s): s is string => !!s),
+    sector: a.sector ?? [],
+    stock: a.stock ?? null,
+    language: a.language,
+    summary: a.summary ?? null,
+    subHeadline: a.subHeadline ?? null,
+    description: a.description
+      ? a.description.replace(/<[^>]*>/g, '').trim().slice(0, 300)
+      : null,
+  }));
+}
+
 export async function fetchLatestNews(pageSize = 10): Promise<NewsListItem[]> {
   const res = await fetch(
     `${API_BASE}/api/v1/News/GetNewsByLanguage?langType=0&pageNumber=1&pageSize=${pageSize}`,

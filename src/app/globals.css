@@ -32,12 +32,23 @@ body {
 }
 
 @layer utilities {
+  /* scrollbar-width:none kills scrollWidth math in some browsers; use thin+transparent instead */
   .scrollbar-hide {
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;     /* Firefox */
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
   }
   .scrollbar-hide::-webkit-scrollbar {
-    display: none;             /* Chrome, Safari, Opera */
+    height: 0px;
+    width: 0px;
+  }
+  .scrollbar-hide::-webkit-scrollbar-button {
+    display: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar-thumb {
+    background: transparent;
+  }
+  .scrollbar-hide::-webkit-scrollbar-track {
+    background: transparent;
   }
 }
 

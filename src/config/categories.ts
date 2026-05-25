@@ -1,70 +1,64 @@
 import type { NewsListItem } from '@/services/news-list';
+import { getArticleCategories } from '@/lib/sector-mapper';
 
 export interface CategoryConfig {
   slug: string;
   title: string;
-  exploreHref: string;
   exploreLabel: string;
   matches: (item: NewsListItem) => boolean;
 }
 
-const passThrough = (_item: NewsListItem) => true;
+const bySectorType = (sectorType: string) =>
+  (item: NewsListItem) =>
+    getArticleCategories(item.sector).includes(sectorType);
 
 export const CATEGORIES: readonly CategoryConfig[] = [
   {
     slug: 'business',
     title: 'Business',
-    exploreHref: '#',
-    exploreLabel: 'Explore Business',
-    matches: passThrough,
+exploreLabel: 'Explore Business',
+    matches: bySectorType('Business'),
   },
   {
-    slug: 'communication',
-    title: 'Communication',
-    exploreHref: '#',
-    exploreLabel: 'Explore Communication',
-    matches: passThrough,
+    slug: 'communications',
+    title: 'Communications',
+exploreLabel: 'Explore Communications',
+    matches: bySectorType('Communications'),
   },
   {
     slug: 'cryptocurrency',
     title: 'Cryptocurrency',
-    exploreHref: '#',
-    exploreLabel: 'Explore Cryptocurrency',
-    matches: passThrough,
+exploreLabel: 'Explore Cryptocurrency',
+    matches: bySectorType('CryptoCurrency'),
   },
   {
     slug: 'finance',
     title: 'Finance',
-    exploreHref: '#',
-    exploreLabel: 'Explore Finance',
-    matches: passThrough,
+exploreLabel: 'Explore Finance',
+    matches: bySectorType('Financial'),
   },
   {
     slug: 'healthcare',
     title: 'Healthcare',
-    exploreHref: '#',
-    exploreLabel: 'Explore Healthcare',
-    matches: passThrough,
+exploreLabel: 'Explore Healthcare',
+    matches: bySectorType('Medicine'),
   },
   {
     slug: 'lifestyle',
     title: 'Lifestyle',
-    exploreHref: '#',
-    exploreLabel: 'Explore Lifestyle',
-    matches: passThrough,
+exploreLabel: 'Explore Lifestyle',
+    matches: bySectorType('Lifestyle'),
   },
   {
     slug: 'sustainability',
     title: 'Sustainability',
-    exploreHref: '#',
-    exploreLabel: 'Explore Sustainability',
-    matches: passThrough,
+exploreLabel: 'Explore Sustainability',
+    matches: bySectorType('Sustainability'),
   },
   {
     slug: 'technology',
     title: 'Technology',
-    exploreHref: '#',
-    exploreLabel: 'Explore Technology',
-    matches: passThrough,
+exploreLabel: 'Explore Technology',
+    matches: bySectorType('Technology'),
   },
 ] as const;
