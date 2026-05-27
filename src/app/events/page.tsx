@@ -1,9 +1,8 @@
 import type { Metadata } from 'next';
 import { fetchEvents, type Event } from '@/services/events';
+import { generateListingMetadata } from '@/lib/metadata';
 
-export const metadata: Metadata = {
-  title: 'Events | ACN Newswire',
-};
+export const metadata: Metadata = generateListingMetadata('events');
 
 
 function EventSection({ title, events }: { title: string; events: Event[] }) {

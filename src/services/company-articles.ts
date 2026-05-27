@@ -1,4 +1,6 @@
 // services/company-articles.ts
+import { sanitizeText, sanitizeHeadline } from '@/lib/sanitize';
+
 const API_BASE = 'https://www.acnnewswire.com/acnnewswireapi';
 
 export interface CompanyArticle {
@@ -46,19 +48,12 @@ export async function fetchCompanyArticles(
   return raw.slice(0, 4).map((a) => {
     const rawDesc = a.summary ?? '';
     const description = rawDesc
-      ? rawDesc
-          .replace(/<[^>]*>/g, '')
-          .replace(/&quot;/g, '"')
-          .replace(/&amp;/g, '&')
-          .replace(/&lt;/g, '<')
-          .replace(/&gt;/g, '>')
-          .trim()
-          .slice(0, 200)
+      ? sanitizeText(rawDesc).slice(0,200)
       : null;
 
     return {
       id: a.articleId,
-      headline: a.headline ?? '',
+      headline: sanitizeHeadline(a.headline) ?? '',
       dateTime: a.dateTime ?? '',
       thumbImage: a.photo?.[0]?.thumbImage ?? a.photo?.[0]?.bigImage ?? null,
       description,
@@ -87,19 +82,12 @@ export async function fetchAllCompanyArticles(
   const articles = raw.map((a) => {
     const rawDesc = a.summary ?? '';
     const description = rawDesc
-      ? rawDesc
-          .replace(/<[^>]*>/g, '')
-          .replace(/&quot;/g, '"')
-          .replace(/&amp;/g, '&')
-          .replace(/&lt;/g, '<')
-          .replace(/&gt;/g, '>')
-          .trim()
-          .slice(0, 200)
+      ? sanitizeText(rawDesc).slice(0, 200)
       : null;
 
     return {
       id: a.articleId,
-      headline: a.headline ?? '',
+      headline: sanitizeHeadline(a.headline) ?? '',
       dateTime: a.dateTime ?? '',
       thumbImage: a.photo?.[0]?.thumbImage ?? a.photo?.[0]?.bigImage ?? null,
       description,

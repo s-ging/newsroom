@@ -99,13 +99,13 @@ function PRCard({ pr, image: initialImage, label }: {
       </div>
 
       <div className="overflow-hidden" style={{ height: "250px", width: containerStyle.width }}>
-        <h3 className="mb-3 text-base leading-snug text-black">
+        <h3 className="mb-3 text-base leading-snug text-black line-clamp-4">
           {pr.headline}
         </h3>
-        <p className="mb-2 text-xs font-semibold text-gray-500">
+        <p className="mb-1 text-sm font-semibold text-[#2088c9]">
           {pr.stock?. [0]?.companyName}
         </p>
-        <p className="text-xs text-gray-400">{formatDateTime(pr.dateTime, pr.language)}</p>
+        <p className="text-[10px] text-gray-400">{formatDateTime(pr.dateTime, pr.language)}</p>
       </div>
     </article>
   );

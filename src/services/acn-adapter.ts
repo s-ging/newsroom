@@ -5,22 +5,23 @@
 import type { AcnPressRelease } from './acn-api.types';
 import type { PressReleaseData } from '@/components/press-release/types';
 import { slugify } from 'transliteration';
+import { sanitizeText, sanitizeHeadline } from '@/lib/sanitize';
 
 export function adaptAcnPressRelease(raw: AcnPressRelease): PressReleaseData {
   return {
     id:           raw.id,
-    headline:     raw.headline,
-    subHeadline:  raw.subHeadline ?? null,
+    headline:     sanitizeHeadline(raw.headline),
+    subHeadline:  sanitizeText(raw.subHeadline) ?? null,
     dateTime:     raw.dateTime,
-    bodyText:     raw.bodyText ?? '',
+    bodyText:     sanitizeText(raw.bodyText) ?? '',
     bodyHtml:     raw.bodyHtml,
     language:     raw.language,      // "Japanese", "English", etc.
-    source:       raw.source,
+    source:       sanitizeText(raw.source),
     supplier:     raw.supplier,
     location:     raw.location,      // shape is identical, pass through
     url:          raw.url,
     sector:       raw.sector ?? [],
-    topic:        raw.topic,
+    topic:        sanitizeText(raw.topic),
     views:        raw.views,
 
     // Old API sends photo as objects — your mock uses string[].
@@ -32,12 +33,12 @@ export function adaptAcnPressRelease(raw: AcnPressRelease): PressReleaseData {
 
     // Strip fields your app doesn't need (issuer, companyNameCH, etc.)
     companies: (raw.companies ?? []).map(c => ({
-      comp_ID:      c.comp_ID,
-      company_Name: c.company_Name,
-      companyNameJP: c.companyNameJP,
-      companyNameKO: c.companyNameKO,
-      companyNameCH: c.companyNameCH,
-      companyNameCT: c.companyNameCT,
+      comp_ID:      sanitizeText(c.comp_ID),
+      company_Name: sanitizeText(c.company_Name),
+      companyNameJP: sanitizeText(c.companyNameJP),
+      companyNameKO: sanitizeText(c.companyNameKO),
+      companyNameCH: sanitizeText(c.companyNameCH),
+      companyNameCT: sanitizeText(c.companyNameCT),
       logofilename: c.logofilename,
       url:          c.url,
       facebook:     c.facebook,

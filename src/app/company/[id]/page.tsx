@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { PressReleaseItem } from '@/components/press-release/PressReleaseItem';
 import { fetchAllCompanyArticles } from '@/services/company-articles';
+import { generateCompanyMetadata, SITE_URL, SITE_NAME } from '@/lib/metadata';
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -11,9 +12,8 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
-  const { companyName } = await fetchAllCompanyArticles(id);
-  const name = companyName ?? `Company ${id}`;
-  return { title: `${name} Press Releases | ACN Newswire` };
+  const company = await fetchAllCompanyArticles(id);
+  return generateCompanyMetadata(company, id);
 }
 
 export default async function CompanyPage({ params, searchParams }: Props) {
@@ -40,7 +40,26 @@ export default async function CompanyPage({ params, searchParams }: Props) {
     return `/company/${id}?${qs}`;
   };
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name,
+    url: `${SITE_URL}/company/${id}`,
+    ...(logoSrc && {
+      logo: {
+        '@type': 'ImageObject',
+        url: `https://www.acnnewswire.com/images/company/${logoSrc}`,
+      },
+    }),
+    publishingPrinciples: SITE_URL,
+  };
+
   return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
     <div className="relative container mx-auto px-4 py-6 max-w-7xl min-h-125">
       {logoSrc && (
         <div className="absolute inset-0 opacity-[0.08] pointer-events-none flex items-center justify-center grayscale">
@@ -103,5 +122,6 @@ export default async function CompanyPage({ params, searchParams }: Props) {
         </>
       )}
     </div>
+    </>
   );
 }

@@ -3,6 +3,8 @@
 // Uses GetNewsByLanguage (langType=0 → ALL languages) as the "latest" feed.
 // Swap to /Sector/GetNewsBySector when a sector ID is chosen.
 
+import { sanitizeText, sanitizeHeadline } from '@/lib/sanitize';
+
 const API_BASE = 'https://www.acnnewswire.com/acnnewswireapi';
 
 export interface NewsListItem {
@@ -60,9 +62,9 @@ export async function fetchNewsList(page = 1, limit = 20): Promise<NewsListItem[
 
   return raw.map((a) => ({
     id: a.id,
-    headline: a.headline ?? '',
+    headline: sanitizeHeadline(a.headline) ?? '',
     dateTime: a.dateTime ?? '',
-    source: a.source ?? '',
+    source: sanitizeText(a.source) ?? '',
     url: a.url ?? '',
     photo: (a.photo ?? [])
       .map((p) => p.thumbImage ?? p.bigImage ?? null)
@@ -70,10 +72,10 @@ export async function fetchNewsList(page = 1, limit = 20): Promise<NewsListItem[
     sector: a.sector ?? [],
     stock: a.stock ?? null,
     language: a.language,
-    summary: a.summary ?? null,
-    subHeadline: a.subHeadline ?? null,
+    summary: sanitizeText(a.summary) ?? null,
+    subHeadline: sanitizeText(a.subHeadline) ?? null,
     description: a.description
-      ? a.description.replace(/<[^>]*>/g, '').trim().slice(0, 300)
+      ? sanitizeText(a.description.replace(/<[^>]*>/g, '').trim().slice(0, 300))
       : null,
   }));
 }
@@ -95,9 +97,9 @@ export async function fetchLatestNews(pageSize = 10): Promise<NewsListItem[]> {
 
   return raw.map((a) => ({
     id: a.id,
-    headline: a.headline ?? '',
+    headline: sanitizeHeadline(a.headline) ?? '',
     dateTime: a.dateTime ?? '',
-    source: a.source ?? '',
+    source: sanitizeText(a.source) ?? '',
     url: a.url ?? '',
     photo: (a.photo ?? [])
       .map((p) => p.thumbImage ?? p.bigImage ?? null)
@@ -105,10 +107,10 @@ export async function fetchLatestNews(pageSize = 10): Promise<NewsListItem[]> {
     sector: a.sector ?? [],
     stock: a.stock ?? null,
     language: a.language,
-    summary: a.summary ?? null,
-    subHeadline: a.subHeadline ?? null,
+    summary: sanitizeText(a.summary) ?? null,
+    subHeadline: sanitizeText(a.subHeadline) ?? null,
     description: a.description
-      ? a.description.replace(/<[^>]*>/g, '').trim().slice(0, 300)
+      ? sanitizeText(a.description.replace(/<[^>]*>/g, '').trim().slice(0, 300))
       : null,
   }));
 }

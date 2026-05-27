@@ -1,12 +1,20 @@
+import type { Metadata } from 'next';
 import { searchArticles } from '@/services/search';
 import { SearchSidebar } from '@/components/search/SearchSidebar';
 import { SearchResults } from '@/components/search/SearchResults';
+import { generateListingMetadata } from '@/lib/metadata';
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 
 function toArray(value: string | string[] | undefined): string[] {
   if (!value) return [];
   return Array.isArray(value) ? value : [value];
+}
+
+export async function generateMetadata({ searchParams }: { searchParams: SearchParams }): Promise<Metadata> {
+  const params = await searchParams;
+  const q = ((params.q as string | undefined) ?? '').trim();
+  return generateListingMetadata('search', q || undefined);
 }
 
 export default async function SearchPage({ searchParams }: { searchParams: SearchParams }) {

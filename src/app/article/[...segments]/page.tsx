@@ -1,13 +1,38 @@
 // app/article/[...segments]/page.tsx
+import type { Metadata } from 'next';
 import { redirect, notFound } from 'next/navigation';
 import { isRedirectError } from 'next/dist/client/components/redirect-error';
 import { PressRelease, InfiniteArticleFeed } from '@/components/press-release';
 import { fetchPressRelease } from '@/services/press-release';
 import { fetchCompanyArticles } from '@/services/company-articles';
 import { headlineToSlug, languageToSlug } from '@/services/acn-adapter';
+import { generateArticleMetadata, SITE_URL, SITE_NAME } from '@/lib/metadata';
 
 type Props = {
   params: Promise<{ segments: string[] }>
+}
+
+function extractId(segments: string[]): string | null {
+  if (segments.length === 0) return null;
+  if (segments.length === 1) return segments[0];
+  if (segments.length === 2) {
+    return !isNaN(Number(segments[0])) ? segments[0] : segments[1];
+  }
+  return segments[1]; // [lang, id, slug...]
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { segments } = await params;
+  const id = extractId(segments);
+  const numericId = Number(id);
+  if (!id || isNaN(numericId)) return {};
+
+  try {
+    const article = await fetchPressRelease(numericId);
+    return generateArticleMetadata(article);
+  } catch {
+    return {};
+  }
 }
 
 export default async function ArticlePage({ params }: Props) {
@@ -45,16 +70,39 @@ export default async function ArticlePage({ params }: Props) {
     // Fetch related articles after the redirect check — compId is only known from data
     const relatedArticles = await fetchCompanyArticles(data.companies?.[0]?.comp_ID);
 
+    const canonical = `${SITE_URL}/article/${correctLang}/${data.id}/${correctSlug}`;
+    const jsonLd = {
+      '@context': 'https://schema.org',
+      '@type': 'NewsArticle',
+      headline: data.headline,
+      description: (data.bodyText ?? '').slice(0, 200) || data.headline,
+      datePublished: data.dateTime,
+      author: [{ '@type': 'Organization', name: data.source }],
+      publisher: {
+        '@type': 'Organization',
+        name: SITE_NAME,
+        logo: { '@type': 'ImageObject', url: `${SITE_URL}/logo.svg` },
+      },
+      image: data.photo?.[0] ?? `${SITE_URL}/api/og/article/${data.id}`,
+      mainEntityOfPage: { '@type': 'WebPage', '@id': canonical },
+    };
+
     return (
-      <main>
-        <div id="article-first-wrapper">
-          <PressRelease data={data} relatedArticles={relatedArticles} />
-        </div>
-        <InfiniteArticleFeed
-          firstId={data.id}
-          firstArticle={{ id: data.id, lang: correctLang, slug: correctSlug }}
+      <>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-      </main>
+        <main>
+          <div id="article-first-wrapper">
+            <PressRelease data={data} relatedArticles={relatedArticles} />
+          </div>
+          <InfiniteArticleFeed
+            firstId={data.id}
+            firstArticle={{ id: data.id, lang: correctLang, slug: correctSlug }}
+          />
+        </main>
+      </>
     );
   } catch (e) {
     if (isRedirectError(e)) throw e; // ← let Next.js handle its own redirect

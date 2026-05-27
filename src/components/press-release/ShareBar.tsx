@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface ShareBarProps {
   headline: string;
@@ -42,12 +42,17 @@ function LinkIcon() {
 
 export function ShareBar({ headline }: ShareBarProps) {
   const [copied, setCopied] = useState(false);
+  const [pageUrl, setPageUrl] = useState('');
 
-  const getEncodedURL = () => encodeURIComponent(window.location.href);
+  useEffect(() => {
+    setPageUrl(window.location.href);
+  }, []);
+
+  const encodedURL = encodeURIComponent(pageUrl);
   const encodedHeadline = encodeURIComponent(headline);
 
   const handleCopyLink = async () => {
-    await navigator.clipboard.writeText(window.location.href);
+    await navigator.clipboard.writeText(pageUrl);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -58,7 +63,7 @@ export function ShareBar({ headline }: ShareBarProps) {
   return (
     <div className="flex flex-wrap gap-2 my-6">
       <a
-        href={`https://www.linkedin.com/sharing/share-offsite/?url=${getEncodedURL()}`}
+        href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodedURL}`}
         target="_blank"
         rel="noopener noreferrer"
         className={btnClass}
@@ -69,7 +74,7 @@ export function ShareBar({ headline }: ShareBarProps) {
       </a>
 
       <a
-        href={`https://twitter.com/intent/tweet?url=${getEncodedURL()}&text=${encodedHeadline}`}
+        href={`https://twitter.com/intent/tweet?url=${encodedURL}&text=${encodedHeadline}`}
         target="_blank"
         rel="noopener noreferrer"
         className={btnClass}
@@ -80,7 +85,7 @@ export function ShareBar({ headline }: ShareBarProps) {
       </a>
 
       <a
-        href={`mailto:?subject=${encodedHeadline}&body=${getEncodedURL()}`}
+        href={`mailto:?subject=${encodedHeadline}&body=${encodedURL}`}
         className={btnClass}
         aria-label="Share via Email"
       >

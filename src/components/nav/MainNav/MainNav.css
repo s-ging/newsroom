@@ -67,6 +67,14 @@
   color: var(--nav-text-color);
   font-size: 14px;
   transition: all 0.125s ease;
+
+  line-clamp: 1;
+  -webkit-line-clamp: 1;
+
+  /* One-line truncation */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .dropdown-link:hover {
@@ -74,6 +82,7 @@
 }
 
 .dropdown-link.label{
-  color: var(--text-color);
+  font-weight: bold;
+  color: var(--accent-color);
 }
 

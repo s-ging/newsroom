@@ -35,7 +35,7 @@ export function PressReleaseItem({ article, companyName, logoSrc: initialLogoSrc
   return (
     <Link
       href={`/article/${article.id}`}
-      className="flex items-stretch gap-0 py-4 group"
+      className="flex items-stretch gap-0 py-3 group"
     >
       {/* Logo column */}
       {!hideLogo && logoSrc && (
@@ -54,8 +54,8 @@ export function PressReleaseItem({ article, companyName, logoSrc: initialLogoSrc
       <div className="w-px bg-gray-200 shrink-0 self-stretch mx-1" />
 
       {/* Content */}
-      <div className="flex-1 min-w-0 px-4 flex flex-col justify-center gap-1">
-        <h3 className="text-md text-gray-900 leading-snug line-clamp-1 group-hover:text-[#2088c9] transition-colors">
+      <div className="flex-1 min-w-0 px-4 py-2 flex flex-col justify-center gap-2">
+        <h3 className="text-md text-gray-800 font-medium leading-snug line-clamp-1 group-hover:text-[#2088c9] transition-colors">
           {article.headline}
         </h3>
         <div className="flex flex-row gap-2 mt-0.5">
@@ -73,7 +73,7 @@ export function PressReleaseItem({ article, companyName, logoSrc: initialLogoSrc
         </div>
 
         {showMeta && sectors && sectors.length > 0 && (
-          <span className="text-xs font-medium text-gray-600 -mt-[2.4px] mb-0.5">
+          <span className="text-xs font-medium text-gray-600 -mt-[8px] mb-0.5">
             {sectors[0]}
           </span>
         )}

@@ -2,10 +2,9 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { PressReleaseItem } from '@/components/press-release/PressReleaseItem';
 import { fetchNewsList } from '@/services/news-list';
+import { generateListingMetadata } from '@/lib/metadata';
 
-export const metadata: Metadata = {
-  title: 'All Press Releases | ACN Newswire',
-};
+export const metadata: Metadata = generateListingMetadata('news');
 
 type Props = {
   searchParams: Promise<{ page?: string; limit?: string }>;

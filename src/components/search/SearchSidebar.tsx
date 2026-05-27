@@ -135,7 +135,7 @@ export function SearchSidebar({
     <div className="space-y-6 mt-3">
       {/* Sectors */}
       <div>
-        <h3 className="text-sm font-medium text-black">Sector</h3>
+        <h3 className="text-sm font-medium text-black">Sector / Industry</h3>
         <div className="mt-2 space-y-0.5">
           {INDUSTRY_HIERARCHY.map((item) => (
             <NestedCheckbox

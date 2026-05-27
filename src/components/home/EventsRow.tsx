@@ -20,8 +20,8 @@ function formatEventDate(startDate: string, endDate: string): string {
 
 function EventCard({ event }: { event: Event }) {
   return (
-    <article className="flex flex-col w-72">
-      <div className="mb-4 aspect-[16/7] overflow-hidden">
+    <article className="flex flex-col  w-[clamp(18rem,calc(25vw-2rem),28rem)]">
+      <div className="mb-4 aspect-16/7 overflow-hidden">
         <img
           src={event.photo!}
           alt={event.description}
@@ -30,11 +30,11 @@ function EventCard({ event }: { event: Event }) {
         />
       </div>
       <div className="overflow-hidden" style={{ height: '120px' }}>
-        <h3 className="mb-3 text-base leading-snug text-black">{event.description}</h3>
+        <h3 className="mb-2 text-base leading-snug text-black">{event.description}</h3>
         {event.location && (
-          <p className="mb-2 text-xs font-semibold text-gray-500">{event.location}</p>
+          <p className="mb-1 text-sm font-semibold text-gray-500">{event.location}</p>
         )}
-        <p className="text-xs text-gray-400">{formatEventDate(event.startDate, event.endDate)}</p>
+        <p className="text-[10px] text-gray-400">{formatEventDate(event.startDate, event.endDate)}</p>
       </div>
     </article>
   );
