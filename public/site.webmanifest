@@ -1,0 +1,15 @@
+{
+  "name": "ACN Newswire",
+  "short_name": "ACN Newswire",
+  "description": "The top Asian News Network for 20 years and counting.",
+  "icons": [
+    { "src": "/icons/16x16.png", "sizes": "16x16", "type": "image/png" },
+    { "src": "/icons/32x32.png", "sizes": "32x32", "type": "image/png" },
+    { "src": "/icons/512x512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/icons/512x512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "theme_color": "#ffffff",
+  "background_color": "#ffffff",
+  "display": "standalone",
+  "start_url": "/"
+}

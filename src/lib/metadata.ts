@@ -15,6 +15,21 @@ export function generateBaseMetadata(): Metadata {
       template: `%s | ${SITE_NAME}`,
     },
     description: SITE_DESCRIPTION,
+    icons: {
+      icon: [
+        { url: '/icons/favicon.svg', type: 'image/svg+xml' },
+        { url: '/icons/16x16.png', sizes: '16x16', type: 'image/png' },
+        { url: '/icons/32x32.png', sizes: '32x32', type: 'image/png' },
+        { url: '/icons/512x512.png', sizes: '512x512', type: 'image/png' },
+      ],
+      apple: [
+        { url: '/icons/512x512.png', sizes: '512x512', type: 'image/png' },
+      ],
+      other: [
+        { rel: 'mask-icon', url: '/icons/favicon.svg' },
+      ],
+    },
+    manifest: '/site.webmanifest',
     openGraph: {
       siteName: SITE_NAME,
       type: 'website',
