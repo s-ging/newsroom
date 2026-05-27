@@ -1,13 +1,16 @@
-// src/app/api/press-release/[id]/route.ts
 import { fetchPressRelease } from '@/services/press-release';
 import { NextResponse } from 'next/server';
 
+type Context = {
+  params: Promise<{ id: string }>
+}
+
 export async function GET(
   _req: Request,
-  { params }: { params: { id: string } }
+  context: Context
 ) {
   try {
-    const { id } = params;
+    const { id } = await context.params;
     const data = await fetchPressRelease(Number(id));
     return NextResponse.json(data);
   } catch {
