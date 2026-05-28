@@ -1,7 +1,7 @@
 // press-release/Body.tsx
 'use client';
 
-import DOMPurify from 'isomorphic-dompurify';
+import DOMpurify from 'dompurify';
 
 interface BodyProps {
   content: string;
@@ -9,8 +9,10 @@ interface BodyProps {
 }
 
 export function Body({ content, className = '' }: BodyProps) {
+
+  if (!content) return null;
   // Security: Sanitize all HTML before rendering
-  const sanitizedContent = DOMPurify.sanitize(content, {
+  const sanitizedContent = DOMpurify.sanitize(content, {
     ALLOWED_TAGS: [
       'p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
       'ul', 'ol', 'li', 'a', 'img', 'figure', 'figcaption', 'div', 'span',
@@ -20,8 +22,6 @@ export function Body({ content, className = '' }: BodyProps) {
       'src', 'alt', 'class', 'href', 'target', 'rel', 'width', 'height', 'align', 'border', 'cellpadding', 'cellspacing'
     ],
   });
-  
-  if (!content) return null;
   
   return (
     <div 
