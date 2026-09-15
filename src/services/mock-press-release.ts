@@ -1,5 +1,5 @@
 // services/mock-press-release.ts
-import type { PressReleaseData } from '@/components/press-release/types';
+import type { PressReleaseData } from '@/types/press-release';
 
 export const mockPressRelease: PressReleaseData = {
   id: 105535,

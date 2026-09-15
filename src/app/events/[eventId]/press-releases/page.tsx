@@ -1,9 +1,9 @@
 // TODO: Replace with real event-article relation when API supports it
 import type { Metadata } from 'next';
-import type { PressReleaseData } from '@/components/press-release/types';
+import type { PressReleaseData } from '@/types/press-release';
 import { fetchPressRelease } from '@/services/press-release';
 import { fetchEvents } from '@/services/events';
-import { PressReleaseItem } from '@/components/press-release/PressReleaseItem';
+import { PressReleaseItem } from '@/components/shared/PressReleaseItem';
 import mappings from '@/data/event-article-mappings.json';
 
 type Props = {

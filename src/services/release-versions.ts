@@ -40,7 +40,7 @@
 //
 // Whichever lands, replace fetchReleaseVersions() and delete this comment. The
 // component already renders the populated state — see ReleaseVersions in
-// components/press-release/ArticleSidebar.tsx.
+// components/features/article/ArticleSidebar.tsx.
 
 import { resolveLanguage } from '@/lib/languages';
 import { headlineToSlug, languageToSlug } from './acn-adapter';

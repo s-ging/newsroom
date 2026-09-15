@@ -1,0 +1,157 @@
+meta:
+  file: STYLING.toon
+  purpose: "The visual contract. What the tokens are, which class strings are canonical, and where the tree currently disagrees with itself. Read BEFORE writing any markup."
+  format: TOON
+  updated: 2026-09-16
+  hand_edit: "YES - unlike COMPONENTS.toon this one is written by hand. Update it in the same commit as any change to globals.css, a shared class string, or a page shell."
+  companions: "BIBLE.md (the rules), COMPONENTS.toon (the inventory), PROJECT-CONTEXT.toon (the codebase map)"
+  reading_note: "Sections marked CANONICAL are the thing to copy. Sections marked DIVERGENCE are known debt with a decision still owed - do not propagate them, and do not silently fix them either, because a fix is a visual change and needs to be asked for."
+
+house_voice:
+  summary: "Editorial newswire, not SaaS dashboard. Flat, square, quiet."
+  rules[6]{rule,detail}:
+    weightless_display,"Display type carries NO font-weight. Page titles, shelf titles and section headings are all plain Inter with tracking-tight. Weight appears ONLY on micro-labels at text-sm and below. Adding font-semibold or font-bold to a heading is the single easiest way to make this site look generic."
+    pure_black,"Display headings are text-black, not text-gray-900. Body copy is gray-700, meta is gray-400/gray-500."
+    tight_tracking,"letter-spacing: -0.3px globally, plus tracking-tight on every display heading."
+    flat_surfaces,"The border-radius in .button is commented out DELIBERATELY. Rounding and shadows exist almost entirely inside common/ab/AbOverlay (the employee tool, not the public site). Do not add rounded-xl cards or drop shadows to public pages."
+    hairline_rules,"Separation is done with 1px gray rules - divide-y divide-gray-100/200, border-t border-gray-200 - not with cards, fills or elevation."
+    one_accent,"#2088c9, muted. Never a second blue."
+
+approach:
+  default: "Tailwind v4 utilities, written inline."
+  css_modules: "None anywhere. Do not introduce them."
+  global_stylesheets[4]{file,scope,why}:
+    src/app/globals.css,"whole app","tokens, .button, .article-body, .scrollbar-hide, the fade animation"
+    src/components/common/nav/MainNav/MainNav.css,global,".nav-link and .dropdown-link"
+    src/components/common/nav/TopNav/TopNav.css,global,".top-nav and .global-dropdown"
+    src/components/common/ab/AbOverlay.css,global,"employee overlay bar, modal, pulse keyframes"
+  global_warning: "None of these are scoped. A class name added to any of them leaks app-wide."
+  removed_2026_09_16: "components/common/Footer/Footer.css - 156 unscoped .footer-* rules, the last pure-CSS component in the tree. Footer.tsx is now Tailwind."
+
+tokens:
+  status: CANONICAL
+  defined_at: src/app/globals.css:4-9
+  vars[4]{name,value,note}:
+    --background,#ffffff,"read by body"
+    --foreground,#171717,"exposed to Tailwind as --color-foreground; nothing else reads it"
+    --nav-text-color,#000000,"MainNav.css"
+    --accent-color,#2088c9,"MainNav.css, TopNav.css, AbOverlay.css, AdminPanel"
+  body_colour: "globals.css now sets color: #000000 outright. It previously declared `color: var(--text-color)` TWICE, reading a variable that only existed as the typo --text-csolor, so the property was invalid at computed-value time and fell back to inherit (black). The typo is gone. Do NOT 'restore' #999999 - that was the typo's intent, never its effect, and it would grey out every unstyled string on the site."
+  dark_mode: "Commented out at globals.css. The app is light-only."
+
+accent:
+  status: CANONICAL
+  value: "#2088c9"
+  detail: "One blue. 18 files use the literal hex in Tailwind arbitrary values; 4 stylesheets read var(--accent-color). Both are fine - prefer the literal in TSX to match the majority."
+  resolved_2026_09_16[2]{was,where}:
+    "#2563eb / blue-600","MainNav.css .nav-link.active and its text-shadow, plus app/not-found.tsx - now the accent"
+    "#1171ae","the old Footer.css divider and link hover, a fourth spelling found nowhere else - now the accent"
+  article_body_case: "globals.css .article-body a is spelled #2088C9 (uppercase). Same colour; left alone."
+
+headings:
+  status: CANONICAL
+  rule: "Three tiers. Display tiers carry NO weight. Only the micro tier does."
+  tiers[4]{tier,classes,used_for,count}:
+    page_title,"text-3xl tracking-tight text-black mb-8","the h1 on a listing or utility page: news, search, events, event press-releases, error, not-found",6
+    shelf_title,"text-3xl tracking-tight text-black","top-level shelf headings on the homepage, which has no h1: CategoryRow, EventsRow, FeaturedReleases, HomeSkeletons",4
+    section,"text-2xl tracking-tight text-black (+ mb-4 where it needs the gap)","an h2 INSIDE a page that already has an h1 or hero: company description, press releases, about the event, industries covered, about the company, more from company, events listing sections",9
+    micro_label,"text-[11px] font-semibold uppercase tracking-wider text-gray-400","rail section labels via RailLabel. Weight is correct here and ONLY here",2
+  hero_h1[2]{where,classes}:
+    "event detail heroes","max-w-3xl text-3xl leading-tight tracking-tight text-white sm:text-4xl lg:text-5xl"
+    "article headline","mb-8 text-3xl md:text-4xl lg:text-5xl tracking-tight text-black leading-tight"
+  resolved_2026_09_16[4]{was,where,why_it_was_wrong}:
+    "text-2xl md:text-3xl font-bold text-gray-900 mb-4","features/article/Company.tsx","the ONLY font-bold display heading in the tree, the only one in gray-900, and the only one that grew at md - and it sat directly above MoreFromCompany, which was a different size AND weight"
+    "text-3xl text-black tracking-tight","features/article/MoreFromCompany.tsx","correct voice but page-title scale for an in-page section, so it out-shouted the section above it"
+    "text-lg font-semibold text-gray-700","app/events/page.tsx x2","the only grey, weighted, small section headings on the site"
+    "text-2xl font-semibold text-black","company page x2, event detail x4","weighted display type - the generic default this site deliberately is not"
+  note_on_the_earlier_decision: "An earlier pass recorded text-2xl font-semibold as the target. That was wrong and is reversed here: counting the tree, 10 headings already used the weightless form (every page h1, every homepage shelf) against 6 weighted, and app/error.tsx - written independently - used the weightless form too."
+
+buttons:
+  status: CANONICAL
+  rule: "Every button and button-styled link uses .button, optionally .button.alt. Do NOT hand-roll a bordered pill in Tailwind."
+  base: ".button - #FFFFFF on #333333, 14px, padding 6px 18px, no radius (the border-radius line is commented out on purpose)"
+  alt: ".button.alt - #000000 on #EEEEEE, hover #BBBBBB, 0.08s transition"
+  layout_utilities_are_fine: "Add Tailwind for LAYOUT only - inline-flex, block, text-center, whitespace-nowrap, gap, margin. Never re-declare colour, font-size or padding."
+  call_sites: "15 across app/ and components/. Primary action .button, secondary .button alt - see app/error.tsx and app/not-found.tsx for the pairing."
+  fixed_2026_09_16: "app/events/page.tsx rolled its own 'px-3 py-1.5 text-xs rounded border text-gray-700 border-gray-300 hover:bg-gray-50' on both row actions - the only page in the tree off the shared button."
+
+rails:
+  status: CANONICAL
+  component: src/components/shared/Rail.tsx
+  rule: "Every right-hand rail goes through <Rail>. Never hand-roll <aside className={RAIL_WIDTH}> again."
+  shell[3]{prop,effect,used_by}:
+    "(none)","<aside> only, rail scrolls with the page","both event detail rails"
+    sticky,"adds lg:sticky lg:top-6","company rail"
+    "sticky bordered","adds lg:sticky lg:top-6 lg:border-l lg:border-gray-200 lg:pl-6","article rail"
+  width: "RAIL_WIDTH = w-full lg:w-[320px] lg:shrink-0 - both rails, one width. Do not override it."
+  primitives[5]{export,role}:
+    Rail,"the <aside> shell itself"
+    RailSection,"a block. `boxed` wraps it in the bordered card the company rail uses"
+    RailRow,"a dt/dd pair. Returns null for null/undefined/empty - THIS is why cards self-omit"
+    RailLabel,"the micro-label tier - the only weighted heading style in the app"
+    RailExternalLink,"an external link at rail type size"
+  deliberate_difference: "The company rail is `boxed`, the article rail is not. On /company the rail IS the page, so its cards need edges. On /article nothing may compete with the release headline. Keep it."
+  skeleton_exception: "Loading skeletons import RAIL_WIDTH and apply it to a plain <div> rather than rendering <Rail>. That is SANCTIONED, not a violation: a placeholder is not semantically an <aside>, and a skeleton does not want the sticky behaviour. RAIL_WIDTH is exported for exactly this. The decree - every actual rail goes through <Rail> - is unchanged. See app/company/[id]/loading.tsx."
+
+page_shells:
+  status: DIVERGENCE
+  canonical: "container mx-auto px-4 py-6 max-w-7xl"
+  canonical_used_by: "/news, /search, /events, /events/<id>/press-releases, /error, /not-found"
+  variants[5]{classes,used_by,note}:
+    "container mx-auto px-4 py-6 max-w-7xl","news, search, events, event press-releases, error, not-found","CANONICAL - 6 pages"
+    "container mx-auto px-4 py-8 max-w-7xl min-h-125 lg:px-8",company,"adds lg:px-8 and min-h. FIXED 2026-09-16: it used to carry py-6 AND py-8 in one string, the py-6 dead."
+    "container mx-auto min-h-125 max-w-7xl px-4 py-8 lg:px-8","event detail body x2","matches the company shell"
+    "container mx-auto max-w-7xl px-4 py-12 lg:px-8 lg:py-16","event hero x2","hero-specific vertical rhythm, legitimately different"
+    "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8","press release","STILL THE OUTLIER - the only shell with no `container` and the only one with sm:px-6, so its gutter differs from every other page at tablet width"
+  open_decision: "Move the press release onto the canonical shell. Offered 2026-09-16 and deliberately deferred - it is a visible change on the site's most important page."
+
+list_row_titles:
+  status: DIVERGENCE
+  detail: "The h3 on a list row has FOUR spellings across four components. Same element, same job, four answers."
+  variants[4]{classes,where}:
+    "text-md text-gray-800 font-medium leading-snug line-clamp-1 group-hover:text-[#2088c9] transition-colors","shared/PressReleaseItem - the most-used row, 6 call sites"
+    "text-md text-gray-900 leading-snug line-clamp-1 group-hover:text-[#2088c9] transition-colors",app/events/page.tsx
+    "text-md leading-snug text-gray-900 transition-colors group-hover:text-[#2088c9]",features/events/EventListCard
+    "text-md font-medium leading-snug text-gray-800",features/events/EventReleaseItem
+  open_decision: "Standardise on the PressReleaseItem spelling - it is the most reused and the only one that is both gray-800 and font-medium. Not yet applied; it is a visible change to every listing on the site."
+
+typography:
+  font: "Inter, loaded TWICE - next/font in app/layout.tsx AND an @import at globals.css:1. The @import is redundant and costs a render-blocking request. Removing it is safe but untested."
+  body: "letter-spacing: -0.3px applied globally"
+  article_body: ".article-body in globals.css - p is #777777 at 1.7 line-height, strong is #333333, a is #2088C9. The ONLY place article HTML is styled."
+  scale_in_use[6]{token,px,typical_use}:
+    "text-[11px]",11,"rail section labels"
+    text-xs,12,"rail rows, meta lines, pills, copyright"
+    text-sm,14,"nav, footer links, secondary copy"
+    "text-[15px]",15,"company description, notices, error/not-found copy"
+    text-2xl,24,"section headings"
+    text-3xl,30,"page and shelf titles"
+
+images:
+  status: DIVERGENCE
+  rule_such_as_it_is: "next/image only for hosts whitelisted in next.config.ts. Everything else is a raw <img> with an eslint-disable."
+  whitelisted[2]{pattern,note}:
+    "www.acnnewswire.com/images/company/**","company logos"
+    "photos.acnnewswire.com/**","article images"
+  not_whitelisted: "www.acnnewswire.com/eventimages - used by services/events.ts, so event photos MUST stay raw <img>"
+  footer_logo: "common/Footer/Footer.tsx still fetches its logo from cdn.prod.website-files.com - a Webflow bucket, not an ACN host. MainNav uses the local src/app/logo.svg. If that bucket goes away the footer loses its logo. Left alone 2026-09-16 because swapping it is a visual decision, not a cleanup."
+
+dead_rules:
+  status: DIVERGENCE
+  used_but_undefined[2]{class,where}:
+    .megamenu-title,"used in MainNav JSX, defined in no stylesheet"
+    .dropdown-menu-section,"used in MainNav JSX, defined in no stylesheet"
+  defined_but_unused[4]{class,where}:
+    ".nav-button*",MainNav.css
+    ".global-dropdown-menu*","TopNav.css - dead since LanguageSelector moved to Tailwind"
+    .nav-middle,TopNav.css
+    .separator,TopNav.css
+
+when_adding_markup[7]{do,why}:
+  "never put font-weight on a heading above text-sm","weightless display type is the house voice; weight is what makes this look generic"
+  "use text-black for headings, not gray-900","every display heading in the tree is text-black"
+  "copy a class string from the headings tiers above","the four tiers are listed precisely so they are copyable"
+  "use .button.alt for anything button-shaped","15 call sites already do; a 16th spelling is how this started"
+  "use <Rail> for any right-hand rail","the shell exists; hand-rolling <aside> is what was removed"
+  "use the literal #2088c9 for accent","matches the 18 files that already do"
+  "do not add rounding or shadow to a public page","the flat, square surface is deliberate - .button's radius is commented out on purpose"

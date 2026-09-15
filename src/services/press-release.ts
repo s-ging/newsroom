@@ -1,5 +1,5 @@
 // services/press-release.ts
-import type { PressReleaseData } from '@/components/press-release/types';
+import type { PressReleaseData } from '@/types/press-release';
 import type { NewApiPressRelease, LegacyApiArticle } from './acn-api.types';
 import { adaptNewApiPressRelease } from './acn-adapter';
 import { apiInit } from '@/lib/api-timeout';

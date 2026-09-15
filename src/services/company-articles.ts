@@ -29,9 +29,11 @@ export interface CompanyArticle {
   dateTime: string;
   thumbImage: string | null;
   description: string | null;
-  // by-company does not return a language field, so this is only populated on
-  // paths that have one — today that means search results. Rows without it
-  // simply render no tag.
+  // Populated from the feed row. The note that used to sit here said
+  // by-company returns no language field — that was wrong (C-M8), and it cost
+  // every company-feed row its language tag. Still optional, because the other
+  // paths that build a CompanyArticle may not carry one; a row without it
+  // renders no tag, as before.
   language?: string | null;
 }
 
@@ -59,6 +61,15 @@ function mapArticle(a: NewApiArticle): CompanyArticle {
     dateTime: a.publishDate,
     thumbImage: bigImage ? `${PHOTOS_BASE}${bigImage}` : null,
     description: sanitizeText(a.summary) || null,
+    // C-M8 — by-company DOES return `language`. Re-probed 2026-09-10: the rows
+    // carry "EN" / "ZH-TW" / "JA" and always have; NewApiArticle has declared
+    // the field all along, this mapper just never read it. Every company feed
+    // row rendered untagged while the value sat in the response.
+    //
+    // resolveLanguage() in lib/languages.ts already absorbs the wire's
+    // spellings, so passing the raw tag through is enough; an unknown value
+    // comes back null there rather than being guessed at.
+    language: a.language ?? null,
   };
 }
 

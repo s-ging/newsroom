@@ -2,7 +2,7 @@
 // Converts new development API shape → PressReleaseData.
 
 import type { NewApiPressRelease, LegacyApiArticle } from './acn-api.types';
-import type { PressReleaseData } from '@/components/press-release/types';
+import type { PressReleaseData } from '@/types/press-release';
 import { slugify } from 'transliteration';
 import { sanitizeText, sanitizeHeadline } from '@/lib/sanitize';
 import { slugFor } from '@/lib/languages';

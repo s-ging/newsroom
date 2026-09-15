@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "components:map": "node scripts/gen-components.mjs",
+    "components:check": "node scripts/gen-components.mjs --check"
   },
   "dependencies": {
     "@upstash/redis": "^1.38.3",

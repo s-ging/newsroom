@@ -1,0 +1,19 @@
+#!/bin/sh
+# .githooks/pre-commit
+#
+# Keeps COMPONENTS.toon truthful. It is generated from the import graph, so the
+# only way it stays correct is if it is regenerated whenever the graph moves.
+#
+# Enable once per clone:
+#
+#     git config core.hooksPath .githooks
+#
+# Skip for one commit with: git commit --no-verify
+
+set -e
+
+# Only spend the time when something that affects the graph actually changed.
+if git diff --cached --name-only | grep -qE '^src/.*\.(tsx|ts|jsx|js|css)$'; then
+  node scripts/gen-components.mjs
+  git add COMPONENTS.toon
+fi

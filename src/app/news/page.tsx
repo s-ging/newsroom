@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { PressReleaseItem } from '@/components/press-release/PressReleaseItem';
+import { PressReleaseItem } from '@/components/shared/PressReleaseItem';
+import { NavPending } from '@/components/shared/NavPending';
 import { fetchNewsList } from '@/services/news-list';
 import { generateListingMetadata } from '@/lib/metadata';
 
@@ -58,25 +59,30 @@ export default async function NewsPage({ searchParams }: Props) {
               <Link
                 href={page > 1 ? buildHref(page - 1) : '#'}
                 aria-disabled={page <= 1}
-                className={`px-4 py-2 text-sm rounded border ${
+                className={`inline-flex items-center gap-2 px-4 py-2 text-sm rounded border ${
                   page <= 1
                     ? 'text-gray-300 border-gray-200 pointer-events-none'
                     : 'text-gray-700 border-gray-300 hover:bg-gray-50'
                 }`}
               >
                 Previous
+                {/* Paging changes only ?page=, which does not trip
+                    news/loading.tsx - so the spinner is the only feedback
+                    these two buttons can give. See shared/NavPending. */}
+                <NavPending />
               </Link>
               <span className="text-sm text-gray-600">Page {page}</span>
               <Link
                 href={hasNext ? buildHref(page + 1) : '#'}
                 aria-disabled={!hasNext}
-                className={`px-4 py-2 text-sm rounded border ${
+                className={`inline-flex items-center gap-2 px-4 py-2 text-sm rounded border ${
                   !hasNext
                     ? 'text-gray-300 border-gray-200 pointer-events-none'
                     : 'text-gray-700 border-gray-300 hover:bg-gray-50'
                 }`}
               >
                 Next
+                <NavPending />
               </Link>
             </div>
           )}

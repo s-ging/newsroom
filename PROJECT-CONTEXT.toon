@@ -1,13 +1,16 @@
 meta:
   file: PROJECT-CONTEXT.toon
-  purpose: "Onboarding context map of this codebase for humans and AI agents. Read this FIRST before exploring."
+  purpose: "Onboarding context map of this codebase: routes, services, API health, blockers. One of four files - see companions."
+  read_first: "BIBLE.md, NOT this file. BIBLE.md is the contract and points here for route/service/API detail."
+  companions: "BIBLE.md (the rules), COMPONENTS.toon (generated component inventory), STYLING.toon (the visual contract)"
   format: TOON
-  updated: 2026-09-08
+  updated: 2026-09-16
   cadence: "twice monthly"
   next_review: 2026-09-22
   scope: "This repo is the frontend portal ONLY. The API is a separate .NET repo (acnnewswire-api) not present here."
-  rot_warning: "Sections api_health, blockers and current_steps go stale fastest - re-verify those every update. Structure sections (routes, components, services) change slowly."
-  refresh_how: "Probe api_health with curl against the swagger list; re-read docs/api-schemas/_gaps.csv; re-run git log since the updated date above."
+  rot_warning: "Sections api_health, blockers and current_steps go stale fastest - re-verify those every update. Structure sections (routes, services) change slowly. COMPONENT structure is no longer described here at all: COMPONENTS.toon is generated from the import graph and cannot go stale."
+  refresh_how: "Probe api_health with curl against the swagger list; re-read docs/api-schemas/_gaps.csv; re-run git log since the updated date above. Component rows need no refresh - run npm run components:map instead."
+  last_change: "2026-09-16 - src/components re-tiered into common/ shared/ features/, the four hand-rolled rail <aside> blocks unified behind <Rail>, events listing buttons moved onto .button.alt, press-release types moved to src/types/."
 
 project:
   name: acn-newswire-portal
@@ -30,16 +33,18 @@ stack[12]{layer,choice,version,note}:
   ab_storage,@upstash/redis,^1.38.3,"A/B vote tallies in prod; falls back to a local JSON file when env unset"
   slugs,transliteration,^2.6.1,"slugify() at services/acn-adapter.ts:6 for headline slugs"
   server_guard,server-only,^0.0.1,"guards every src/ab/* module"
-  linting,"eslint + eslint-config-next","^10.0.0 / ^0.2.4","npm run lint"
+  linting,"eslint + eslint-config-next","^10.0.0 / ^0.2.4","npm run lint is BROKEN - see commands.lint. Never ran clean in this state."
   react_compiler,babel-plugin-react-compiler,1.0.0,"devDep INSTALLED BUT DISABLED - commit 1ab5299 commented out reactCompiler:true as a hotfix"
   i18n,next-intl,^4.8.3,"INSTALLED BUT NEVER IMPORTED - dead dependency, safe to remove"
   testing,none,-,"No test script, no runner installed. See lib.__tests__ rows"
 
-commands[7]{cmd,runs,note}:
+commands[9]{cmd,runs,note}:
   dev,"next dev","local dev server"
   build,"next build","Netlify runs this; starts with an EMPTY .next cache"
   start,"next start","serve built output"
-  lint,eslint,"no --fix wired"
+  lint,eslint,"BROKEN - the ajv ^8.18.0 override in package.json is incompatible with eslint@10, which wants ajv/lib/refs/json-schema-draft-04.json. Pre-existing. tsc --noEmit and next build are the real gates."
+  components:map,"node scripts/gen-components.mjs","Regenerates COMPONENTS.toon from the real import graph. Runs automatically on commit once you set git config core.hooksPath .githooks"
+  components:check,"node scripts/gen-components.mjs --check","Exits 1 if COMPONENTS.toon is stale. This is the CI gate."
   prefetch-articles-new,"node scripts/prefetch-articles.mjs","MANUAL ONLY, not in package.json. Rebuilds the /search snapshot from the NEW API. SUPERSEDES scripts/prefetch-articles.js, which sweeps legacy ids and cannot run while that host is 503. Caps at the 5000 most recent articles - the corpus is 20000+ and this file is bundled"
   probe-events-schema,"node scripts/probe-events-schema.mjs","MANUAL ONLY, not in package.json. Re-exports the EVENTS schema surface into docs/api-schemas (4 CSVs plus the Event rows of _index.csv and _field-dictionary.csv). Idempotent; leaves other entities untouched"
   prefetch,"node scripts/prefetch-articles.js","OBSOLETE - sweeps legacy ids 107000-107303 against a host that has been 503 since 2026-08-27, and those ids no longer exist. Use prefetch-articles.mjs instead"
@@ -62,22 +67,24 @@ api_hosts[5]{role,host,note}:
   event_images,https://www.acnnewswire.com/eventimages,"NOT whitelisted in next.config.ts - next/image would reject these"
 
 api_health:
-  probed: 2026-09-08
-  summary: "New API host is UP (swagger 200, 13 paths). The Sectors 500 on press-release/{id} and by-company/{id} is FIXED - articles and company feeds work again. Events/{id} still 500s on the same bug class. Legacy API host is still fully DOWN (503)."
-  events_caution: "Do NOT probe /api/Events without pageSize - the default page of 10 is what led an earlier pass to record 'only 10 events, all 2007-2009'. There are 839."
+  probed: 2026-09-10
+  probed_prev: 2026-09-08
+  summary: "New API host is UP (swagger 200, 13 paths). The Sectors 500 on press-release/{id} and by-company/{id} is FIXED - articles and company feeds work again. Events/{id} still 500s on the same bug class. Legacy API host is still fully DOWN (503). NEW ON 2026-09-10: the Events ARCHIVE IS GONE - the list returns 7 upcoming rows instead of 839, with compId null and companies[] empty on every one."
+  changed_since_2026_09_08: "Four rows below were re-probed and corrected on 2026-09-10: /api/Events (839 -> 7), /api/Articles (the dev DB is no longer a stale snapshot), /api/Articles/search (not empty - it returns a flat 34-key JOIN row), and events_caution. Everything else re-verified as still true. Full before/after payloads for four wire surfaces are in ../contracts/; the service-layer fixes that came out of it are in docs/api-response-fixes-2026-09-16.md."
+  events_caution: "CORRECTED 2026-09-10: there are no longer 839 events. The list now returns 7, all upcoming, and an unpaged call returns the full set. The pageSize advice below still holds if the archive is restored - the default page is 10, which is what led an earlier pass to record 'only 10 events, all 2007-2009'."
   probe_note: "Probe with REAL ids from the list endpoints (articles 106624-106708, companies 14/82/574, events 17-23/163/177/178) - a 404 from a missing record otherwise reads as breakage."
   endpoints[13]{path,host,status,detail}:
     /swagger/v1/swagger.json,new,200,"API is alive, 13 paths published (was 15 - CompContacts and the two Companies sub-paths reshuffled)"
-    /api/Articles,new,200,"works BUT the dev DB is a stale partial snapshot - newest publishDate is 2026-04-28"
+    /api/Articles,new,200,"works. CORRECTED 2026-09-10: the dev DB is NO LONGER a stale partial snapshot - article 109894 is dated 2026-09-08 and event releases run to 2026-09-11. 80,602 articles over 807 pages. CAUTION: SecId and ArtType are accepted and SILENTLY IGNORED - filtered results are byte-identical to unfiltered, so a filter built on either looks like it works and does not. Only HasThumbnail filters. Cid is a SOURCE id, not a company id"
     /api/Articles/homepage,new,200-EMPTY,"returns [] so news-list.ts deliberately reads /api/Articles instead"
     /api/Articles/by-industry,new,200,"FIXED-ish: was recorded 200-EMPTY, but it 400s without the REQUIRED industry param and returns real rows with it"
-    /api/Articles/search,new,200-EMPTY,"returns [] for every filter. Takes ExchangeId/SectorName/CompanyName/TickerId/Country - there is NO keyword param, so it cannot back /search"
+    /api/Articles/search,new,200,"CORRECTED 2026-09-10: it does NOT return [] - it returns a flat 34-key article x company x exchange JOIN row with no companies[] and no images[] at all, which is a different shape from every other article endpoint. Page is ignored: a fixed 10-row window comes back every time. Takes ExchangeId/SectorName/CompanyName/TickerId/Country - there is still NO keyword param, so it cannot back /search"
     /api/Articles/press-release/{id},new,200,"FIXED 2026-09-08 (was 500 Sectors). sectors now arrives as a real ARRAY, not a JSON-encoded string - closes gap ART-01"
     /api/Articles/by-company/{id},new,200,"FIXED 2026-09-08 (was 500 Sectors). pageNumber/pageSize paginate correctly - verified pages 1/2/3 and pageSize=100"
     /api/Companies,new,200,"works, and takes Page/Size - a company directory IS now possible, contra not_built_at_all.company_directory"
     /api/Companies/{id},new,200,works
     /api/Companies/{id}/details,new,200,works
-    /api/Events,new,200,"works and PAGES - pageSize IS honoured and the DEFAULT IS ONLY 10, so an unpaged call returns 10 arbitrary rows. 839 events total (816 publish=y), 2007-11-18 to 2026-12-02. Not date-ordered, so truncating the fetch hides the upcoming ones. Full sweep is ~2.65MB because each event repeats its organiser once per release (one ships the same company 167 times)"
+    /api/Events,new,200-DEGRADED,"CORRECTED 2026-09-10: returns 7 rows, all upcoming, where it previously returned 839 (816 publish=y) spanning 2007-11-18 to 2026-12-02. compId is NULL and companies[] is EMPTY on every row, so no event can name its organiser or resolve a release feed - compId is the only key relating an event to its releases. Every historical event detail page now 404s; only 7 ids resolve. BACKEND-SIDE - confirm intent with the API team before changing code. The ~2.65MB full-sweep figure and the 167-times organiser repetition no longer apply while the response is this small, but both return with the archive"
     /api/Events/{id},new,500,"STILL BROKEN. 'The required column Companies was not present' - same bug class the Articles endpoints just had fixed. Worked around: services/events.ts reads the list and filters"
     /api/Events/company/{id}/year/{year},new,200,"works and IS the event-to-release relation - see EVT-03 below"
   legacy[2]{path,status,detail}:
@@ -155,11 +162,11 @@ adapter:
     field_name_chaos,"Two fields have four spellings across three endpoints: companyId/companyID/comp_ID and logoFilename/logoFileName/logofilename. news-list.ts:35,48 reads both casings defensively"
     bodyHtml_unsanitized,"acn-adapter.ts:64 is a bare ?? chain unlike every neighbouring field - see security section"
     stock_hardcoded,"acn-adapter.ts:80 pins stock to null"
-  canonical_type_location: "src/components/press-release/types.ts:24 declares PressReleaseData - the app's central article type lives in a COMPONENT folder and services import from it (inverted dependency)"
+  canonical_type_location: "src/types/press-release.ts declares PressReleaseData - the app's central article type lives in a COMPONENT folder and services import from it (inverted dependency)"
 
 security:
   sanitization_split: "Regex-only server-side (lib/sanitize.ts, no DOM, serverless-safe); DOMPurify in the browser. The article BODY is sanitised TWICE against one shared allowlist: sanitizeArticleHtml during SSR, then DOMPurify after Body.tsx mounts. 'use client' does not keep a component off the server - calling DOMPurify there threw 'sanitize is not a function' and 500'd every article page once the API stopped 404ing them."
-  only_dangerous_html: src/components/press-release/Body.tsx:29
+  only_dangerous_html: src/components/features/article/Body.tsx:29
   findings[3]{issue,where,detail}:
     bodyHtml_raw_in_rsc_payload,src/services/acn-adapter.ts:64,"bodyHtml still passes through the adapter unsanitized and is still returned raw by /api/press-release/{id}. As of 2026-09-08 the SSR payload IS filtered, because Body.tsx runs sanitizeArticleHtml server-side - but the adapter itself is unchanged, so any consumer that does not render through Body is still unprotected"
     credentials_in_public_api,"new API /api/Companies response","The response schema includes username and password fields on an unauthenticated endpoint. Should be stripped from the backend DTO - raise with the API team"
@@ -193,92 +200,39 @@ static_data[8]{file,size,consumed_by,status}:
   data/swagger.json,"15 legacy paths / 43.7 KB","none in src","REFERENCE ONLY - legacy spec. Only 2 of its 15 paths are actually called"
 
 components:
+  moved: "The per-component rows that used to live here now live in COMPONENTS.toon, which is GENERATED from the real import graph by scripts/gen-components.mjs. They were duplicated and drifted - this file declared company[2] and search[4] when the tree held 3 and 5."
+  read_instead: COMPONENTS.toon
+  refresh: "npm run components:map, or automatically on commit via .githooks/pre-commit"
+  tiers[3]{tier,admission_test,contents}:
+    common,"mounted by app/layout.tsx, so on every page","nav/ (18 files), Footer/ (3), ab/ (3)"
+    shared,"imported by 2+ DIFFERENT feature areas","Rail, LanguageTag, PressReleaseItem, SocialLinks"
+    features,"one feature area only","article/ (11), company/ (3), events/ (6), home/ (5), search/ (5)"
+  import_direction: "features -> shared -> common, one way only. A features/ component NEVER imports from another features/ area; if two need it, it is promoted to shared/ in the same commit."
+  types_location: "src/types/press-release.ts. It was src/types/press-release.ts until 2026-09-16, which meant services/ and lib/ imported UPWARD out of a component folder. That inversion is gone."
+  route_local[2]{file,why}:
+    app/events/[eventId]/LiveEvent.tsx,"the second half of the events detail route, not a reusable component - stays beside the route"
+    app/admin/AdminPanel.tsx,"the body of /admin - same reasoning"
   data_rule: "No component fetches server-side. Pages and route handlers do all server fetching and pass props down. Only 3 components fetch client-side."
   client_fetchers[3]{file,calls}:
-    ab/AbOverlay.tsx,"/api/ab/me, /api/ab/experiments, /api/ab/vote GET+POST, /api/ab/login, /api/ab/logout"
-    press-release/PressReleaseItem.tsx,"/api/press-release/{id} to backfill a missing logo - N+1 risk, one request per logoless row in a feed"
-    press-release/InfiniteArticleFeed.tsx,"/api/press-release/{nextId}, /api/company-articles/{compId}, plus getNextArticleId which hits the EXTERNAL API from the browser"
-  ab[3]{file,type,purpose,notes}:
-    ab/AbOverlay.tsx,client,"Employee A/B toolbar: login modal, a/b/side/slider mode switch, iframe compare panes, preference vote","480 lines. F2 hotkey. Injects /ab-variants/<id>.css. postMessage scroll sync between iframes"
-    ab/AbHiddenTrigger.tsx,client,"2px unlabeled dot in TopNav that opens the overlay","dispatches window event ab:trigger"
-    ab/AbOverlay.css,css,"pulse keyframes plus bar and modal styles","imported by BOTH ab components"
-  company[2]{file,type,purpose,notes}:
-    company/CompanyPagination.tsx,server,"Prev/Next-only pager","no total count is available from the feed; returns null when neither direction exists"
-    company/CompanySidebar.tsx,server,"Company rail: Identity, Contact and Stock cards, each self-omitting","built on Rail primitives; carries the page h1; lg:sticky"
-  events[7]{file,type,purpose,notes}:
-    app/events/[eventId]/LiveEvent.tsx,server,"The API-backed event detail page - hero, event image, release feed, countdown and a self-omitting details rail","Lives beside the route, not in components/, because it IS the second half of that route. Uses PressReleaseItem (real ids, so rows link) rather than EventReleaseItem (mock ids, deliberately unlinked). Renders no venue/admission/hours card - the API has no such fields"
-    events/EventCountdown.tsx,client,"Live countdown with upcoming/live/ended phases","setInterval 1s; null-until-mount to dodge stale-build hydration; trusts the server phase only when ended"
-    events/EventListCard.tsx,server,"Listing row linking to /events/<slug>","mock events only; gradient stands in for a photo"
-    events/EventReleaseItem.tsx,server,"Non-linked press-release row for event pages","deliberately non-linked because mock ids would 404. Dimensional twin of PressReleaseItem"
-    events/EventStatusPill.tsx,client,"Opens-in-N-days / Happening-now / Ended pill","setInterval 60s; height-reserving placeholder pre-mount"
-    events/event-date.ts,module,"Date helpers that render in the event's own ISO offset, not the visitor's timezone",-
-    events/event-industries.ts,module,"Derives event industry tags from release sectors via lib/sectors and lib/filter-data","module-level dev-only console.warn - a side effect on import"
-  home[5]{file,type,purpose,notes}:
-    home/HomeHero.tsx,client,"8-second autoplay carousel with progress bars and play/pause","clone-slide loop via onTransitionEnd; pauses on visibilitychange; inline style keyframes"
-    home/CategoryRow.tsx,client,"Horizontal shelf of category articles","per-image aspect sizing on onLoad; raw img; usePathname as a remount key"
-    home/EventsRow.tsx,client,"Upcoming-events shelf linking to external organiser sites","client-side filter startDate >= today, then sort"
-    home/FeaturedReleases.tsx,server,"3-column featured grid, 0.6fr/0.2fr/0.2fr","has its OWN local ArticleMeta, unrelated to press-release/ArticleMeta"
-    home/ShelfScrollBar.tsx,client,"Draggable custom horizontal scrollbar bound to a parent scroll ref","ResizeObserver plus 3-stage measure; handles bfcache pageshow and popstate; returns null when no overflow"
-  nav[18]{file,type,purpose,notes}:
-    nav/index.tsx,module,"Barrel exporting TopNav and MainNav","3 lines"
-    nav/MainNav/index.tsx,client,"Sticky header: logo, GET /search form, mega-menu row, mobile overlay","NO action links since 2026-09-09 - About/Contact/Login/Register all pointed at non-existent routes and were removed. Both render sites are marked intentionally empty. 4 useState, scroll listener, outside-click, 75/150ms transition choreography. Ignores its own MainNavProps"
-    nav/MainNav/MegaMenuNav.tsx,client,"Mega-menu tab bar and height-animated dropdown shell","useLayoutEffect plus ResizeObserver measurement. Declares its own local props type"
-    nav/MainNav/Company/index.tsx,client,"Company mega-menu: region columns plus A-Z index","FULLY STUBBED - placeholder One..Five, every href is #"
-    nav/MainNav/Country/index.tsx,client,"Country menu grouped continent > subregion > country","BROKEN LINKS - points at /search?country= which the search page never parses, so results are unfiltered"
-    nav/MainNav/Industry/index.tsx,client,"Industry menu grouped by sector_type, links to /search?sec=",-
-    nav/MainNav/Sector/index.tsx,client,"Top-level sector menu, links to /search?sec=","duplicates the toSectionParam helper from Industry"
-    nav/MainNav/Region/index.tsx,client,"Sub-region menu, links to /search?reg=",-
-    nav/MainNav/Language/index.tsx,client,"Language menu showing label plus endonym","sets hrefLang and lang"
-    nav/MainNav/types.ts,module,"MegaMenuItem and DEFAULT_MEGA_MENU_ITEMS, 9 tabs","MainNavProps and MegaMenuNavProps are never imported. Exchange and Stock Codes tabs have href # and no dropdown"
-    nav/MainNav/MainNav.css,css,"nav-link and dropdown-link rules","GLOBAL stylesheet not a module. The .nav-button* rules are unused by any TSX"
-    nav/TopNav/index.tsx,server,"Utility strip: language selector, centered clock, date, hidden A/B dot","a SERVER component composing 4 client children"
-    nav/TopNav/DateTimeDisplay.tsx,client,"4-zone clock: IST, CST, SGT+HKT, KST+JST","renders placeholder dots pre-mount; minute-aligned setTimeout then setInterval"
-    nav/TopNav/DateDisplay.tsx,client,"Today's date, re-armed at midnight","returns null pre-mount"
-    nav/TopNav/LanguageSelector.tsx,client,"Globe dropdown to 5 external ACN domains","hover-intent timeout; outside-click. Re-implements the dropdown in Tailwind, ignoring TopNav.css rules"
-    nav/TopNav/ClientLinks.tsx,client,"Clients/Journalists/Publishers links, collapsing under 1080px","ORPHAN - imported at TopNav/index.tsx:8 but its JSX is commented out at :43"
-    nav/TopNav/types.ts,module,"Language and ClientLink types plus defaults","DEFAULT_CLIENT_LINKS feeds only the dead clientLinks prop"
-    nav/TopNav/TopNav.css,css,"top-nav and global-dropdown rules","GLOBAL. Several rules unused since LanguageSelector went Tailwind"
-  press_release[13]{file,type,purpose,notes}:
-    press-release/PressRelease.tsx,server,"Full article shell: article column plus rail","also rendered INSIDE the client InfiniteArticleFeed, so it and its server children get bundled to the client on that path"
-    press-release/Hero.tsx,client,"Headline, subhead, source/date/language block","client only for a useState in LogoMark"
-    press-release/Body.tsx,client,"Renders the sanitized article HTML","THE ONLY dangerouslySetInnerHTML in the app. Client because dompurify needs a DOM. Explicit 33-tag / 12-attr allowlist, no style, no id, no handlers"
-    press-release/Company.tsx,client,"About-the-company block with logo and website","useState logo error fallback"
-    press-release/ArticleSidebar.tsx,server,"Article rail: released-by, summary, versions, details, topics, follow","dev-only amber Stub notice gated on RELEASE_VERSIONS_SUPPORTED and NODE_ENV"
-    press-release/ArticleFooterLink.tsx,server,"acnnewswire.com footer link plus view count",-
-    press-release/ShareBar.tsx,client,"LinkedIn / X / Email / Copy-link row","reads window.location.href in useEffect; 2s Copied state"
-    press-release/MoreFromCompany.tsx,server,"Up to 3 sibling releases, excluding the current id","returns null when empty"
-    press-release/PressReleaseItem.tsx,client,"The site's universal release row - logo, headline, meta, thumb","MOST REUSED list item: MoreFromCompany, SearchResults, /news, /company/<id>, event press-releases. Fetches /api/press-release/{id} to backfill a missing logo"
-    press-release/InfiniteArticleFeed.tsx,client,"Infinite article reader that appends the next release and rewrites the URL on scroll","two IntersectionObservers, history.replaceState, loadedIds Set dedupe, loadingRef reentrancy guard. Observes #article-first-wrapper set by the route"
-    press-release/ArticleMeta.tsx,server,"dl of topic, region, country, source, language, sectors","ORPHAN - removed from PressRelease (see its comment at :49-51) and rendered nowhere. Still carries hardcoded East Asia / Japan defaults"
-    press-release/types.ts,module,"CompanyData, Location, PressReleaseData","The canonical article type lives HERE, not in services - services import upward from a component folder"
-    press-release/index.tsx,module,"Barrel","OMITS ArticleSidebar and PressReleaseItem despite both being widely used via deep imports"
-  search[4]{file,type,purpose,notes}:
-    search/SearchSidebar.tsx,client,"Filter rail: sector/industry tree, language checkboxes, region tree","URL-driven, no local source of truth. Note the asymmetry: sector toggles expand to leaves and never store parents, region toggles DO store parents"
-    search/SearchResults.tsx,server,"Result count line, list, pager","maps sectors through getArticleCategories and getSectorDisplayName"
-    search/NestedCheckbox.tsx,client,"Recursive tri-state hierarchy checkbox","sets .indeterminate imperatively via ref; auto-opens when a child is selected"
-    search/Pagination.tsx,client,"Prev / Page X of Y / Next","hardcodes the /search? target"
-  ui[6]{file,type,purpose,notes}:
-    ui/Rail.tsx,server,"Shared rail primitives: RailSection, RailRow, RailExternalLink plus RAIL_WIDTH/RAIL_PILL/RAIL_LINK consts","RailRow self-omits on null/undefined/empty - this is the mechanism behind every 'card omits itself' behaviour. Keeps the company and article rails dimensionally identical"
-    ui/LanguageTag.tsx,client,"Language badge with hover tooltip and right-click details menu","MOST-REUSED LEAF, 7 call sites. Portaled; viewport-flip positioning; span role=button because it nests inside card-wide Links"
-    ui/SocialLinks.tsx,server,"Rail social row, falls back to a text link when no glyph matches","10-key ICONS map, twitter maps to X"
-    ui/Footer.tsx,server,"Global footer: logo, 5 link columns, 9 social icons, copyright","EVERY link is href=#. Zero Tailwind - pure Footer.css. Looks like a Webflow export"
-    ui/Footer.css,css,"footer-* rules, 155 lines",-
-    ui/SocialIcon.jsx,server,"Maps a platform string to an icon asset","the ONLY .jsx file in the tree, untyped. Declares a size prop that is never used, imports next/image without using it"
+    common/ab/AbOverlay.tsx,"/api/ab/me, /api/ab/experiments, /api/ab/vote GET+POST, /api/ab/login, /api/ab/logout"
+    shared/PressReleaseItem.tsx,"/api/press-release/{id} to backfill a missing logo - N+1 risk, one request per logoless row in a feed"
+    features/article/InfiniteArticleFeed.tsx,"/api/press-release/{nextId}, /api/company-articles/{compId}, plus getNextArticleId which hits the EXTERNAL API from the browser"
 
 styling:
+  moved: "The full visual contract - tokens, canonical class strings, every known divergence - now lives in STYLING.toon. Read that before writing markup."
+  read_instead: STYLING.toon
   approach: "Tailwind v4 utilities as the default, with 4 co-located GLOBAL stylesheets. No CSS Modules anywhere, so those class names leak app-wide."
-  inconsistencies[6]{issue,detail}:
-    accent_three_ways,"var(--accent-color) in ab and MainNav.css, literal #2088c9 in events/search/press-release/home, and #2563eb or blue-600 in .nav-link.active and the MainNav search focus ring"
-    footer_no_tailwind,"ui/Footer.tsx uses pure .footer-* global CSS with zero Tailwind - the single largest inconsistency in the tree"
-    two_button_systems,".button and .button.alt live in globals.css as the de-facto shared button, but MainNav styles its Login/Register pills with raw Tailwind instead"
-    dead_class_names,".megamenu-title and .dropdown-menu-section are used in JSX but defined in no stylesheet. Conversely .nav-button*, .global-dropdown-menu*, .nav-middle and .separator are defined but unused"
-    image_strategy_split,"raw img with an eslint-disable in CategoryRow, EventsRow, FeaturedReleases, PressReleaseItem, CompanySidebar, ArticleSidebar, SocialLinks, SocialIcon and Footer, versus next/image in HomeHero, press-release/Hero, press-release/Company and the MainNav logo"
-    globals_css_typo,"src/app/globals.css:7 defines --text-csolor while body reads var(--text-color), so the variable never resolves. Dark-mode block is commented out at :19-26"
-
-next_config[3]{setting,value,note}:
-  headers,"/_next/image gets Content-Disposition: inline",-
-  redirects,"/companies/:id -> /company/:id (permanent); /companies and /company -> / (temporary)","FIXED 2026-09-09. /companies used to 308 into /company, which has no page.tsx and so 404'd. Both bare paths now land on the homepage until a company directory exists"
-  images.remotePatterns,"www.acnnewswire.com/images/company/** and photos.acnnewswire.com/**","www.acnnewswire.com/eventimages is used by events.ts but NOT whitelisted"
+  resolved_2026_09_16[6]{issue,detail}:
+    rails_unified,"The four hand-rolled <aside className={RAIL_WIDTH}> blocks - company, article and both event rails - now go through one <Rail> shell in components/shared/Rail.tsx. Zero visual change."
+    one_button_system,"app/events/page.tsx was the last page rolling its own bordered pill instead of .button.alt. All 15 button call sites now go through .button / .button.alt."
+    weightless_headings,"THE HOUSE VOICE, now enforced. Display type carries no font-weight: page and shelf titles are text-3xl tracking-tight text-black, in-page sections are text-2xl tracking-tight text-black, and weight survives only on micro-labels at text-sm and below. Removed: the only font-bold display heading (article/Company.tsx), the only grey small section headings (events listing), MoreFromCompany at page-title scale, and six text-2xl font-semibold headings on company and event pages. An earlier pass had recorded font-semibold as the target - that was reversed after counting the tree, where 10 headings already used the weightless form against 6 weighted."
+    one_accent,"#2088c9 everywhere. Removed #2563eb/blue-600 from MainNav.css .nav-link.active and not-found.tsx, and #1171ae - a fourth spelling - from the old Footer.css."
+    footer_on_tailwind,"components/common/Footer/Footer.css DELETED. Its 156 unscoped global .footer-* rules were the last pure-CSS component and the largest styling inconsistency in the tree. Footer.tsx is Tailwind now, with the two Webflow breakpoints (991px, 479px) preserved as arbitrary variants rather than rounded to Tailwind lg:/sm:, which would have moved the layout. Its link markup is data-driven instead of nine hand-repeated blocks."
+    text_csolor_typo,"globals.css declared color: var(--text-color) TWICE, reading a variable that only existed as the typo --text-csolor, so the property was invalid at computed-value time and fell back to inherit. body now states color: #000000 outright. Do NOT restore #999999 - that was the typo's intent, never its effect."
+  open_divergences[3]{issue,detail}:
+    press_release_shell,"The press release is the only page shell without `container` and the only one with sm:px-6, so its gutter differs from every other page at tablet width. Offered 2026-09-16 and deliberately deferred - a visible change on the site's most important page."
+    list_row_titles,"The h3 on a list row has FOUR spellings across PressReleaseItem, events/page.tsx, EventListCard and EventReleaseItem - gray-800 vs gray-900, font-medium vs not. Target is the PressReleaseItem spelling. Not applied; it is visible on every listing."
+    image_strategy_split,"9 components use raw img with an eslint-disable, 4 use next/image. Driven by next.config.ts remotePatterns: eventimages is NOT whitelisted, so those must stay raw. Separately, the footer logo is still fetched from a Webflow CDN rather than the local src/app/logo.svg."
 
 ab_testing:
   what: "Employee-only A/B compare-and-vote overlay, opened with F2 or a hidden dot in the TopNav."
@@ -301,9 +255,10 @@ ab_testing:
     2,"Author public/ab-variants/<id>.css"
     3,"Add data-ab-target to the markup the variant should restyle"
 
-orphans[10]{item,where,detail}:
-  ArticleMeta,src/components/press-release/ArticleMeta.tsx,"rendered nowhere; still has hardcoded region/country defaults"
-  ClientLinks,src/components/nav/TopNav/ClientLinks.tsx,"JSX commented out at TopNav/index.tsx:43"
+orphans[11]{item,where,detail}:
+  note,COMPONENTS.toon,"COMPONENT orphans are now DETECTED, not hand-listed - see the orphans[] block at the bottom of COMPONENTS.toon. It resolves barrels, so a component re-exported by an index.tsx nobody pulls from is caught. The non-component rows below are still hand-maintained."
+  ArticleMeta,src/components/features/article/ArticleMeta.tsx,"rendered nowhere; still has hardcoded region/country defaults. Machine-confirmed 2026-09-16 as the tree's ONLY component orphan"
+  ClientLinks,src/components/common/nav/TopNav/ClientLinks.tsx,"JSX commented out at TopNav/index.tsx:43"
   services/index.ts,src/services/index.ts,"zero importers, so its USE_MOCK gate is unreachable"
   mock-press-release.ts,src/services/mock-press-release.ts,"only index.ts imports it"
   lib/azure.ts,src/lib/azure.ts,"fake DB client, no consumers"
@@ -311,19 +266,25 @@ orphans[10]{item,where,detail}:
   lib/search-mock-data.ts,src/lib/search-mock-data.ts,"superseded by the prefetched snapshot"
   next-intl,package.json:15,"installed, never imported"
   event_press_releases_route,src/app/events/[eventId]/press-releases/page.tsx,"no inbound link because events.ts:53 pins pressReleaseUrl null"
-  dead_nav_links,"src/components/nav/TopNav/types.ts:30-32 and ui/Footer.tsx","/clients, /journalists, /publishers have no routes; every footer link is href=#. NOTE: MainNav's /about /contact /login /register were the same bug and were REMOVED 2026-09-09. No public login exists - the only sign-in is the hidden employee A/B panel (F2 or the TopNav dot), so a Login link would advertise a tool meant to be invisible"
+  dead_nav_links,"src/components/common/nav/TopNav/types.ts:30-32 and common/Footer/Footer.tsx","/clients, /journalists, /publishers have no routes; every footer link is href=#. NOTE: MainNav's /about /contact /login /register were the same bug and were REMOVED 2026-09-09. No public login exists - the only sign-in is the hidden employee A/B panel (F2 or the TopNav dot), so a Login link would advertise a tool meant to be invisible"
 
-conventions[8]{rule,detail}:
+conventions[10]{rule,detail}:
+  read_bible_first,"BIBLE.md is the contract and is read before writing code. It points at COMPONENTS.toon (generated), STYLING.toon and this file."
   fetch_in_pages_only,"Pages and route handlers fetch; components receive props. Only AbOverlay, PressReleaseItem and InfiniteArticleFeed fetch client-side"
   caching_at_call_site,"revalidate is set per fetch() call, never as a route segment export. 3600 everywhere except reading-mode.ts at 300"
   api_routes_are_proxies,"/api/press-release and /api/company-articles exist purely so client components can reach the same services the pages use"
-  rails_via_primitives,"Any new sidebar card should use ui/Rail.tsx primitives so company and article rails stay dimensionally identical"
+  rails_via_Rail,"EVERY right-hand rail goes through <Rail> in components/shared/Rail.tsx. Never hand-roll <aside className={RAIL_WIDTH}> - four copies of that is what the 2026-09-16 refactor deleted. New cards use the RailSection/RailRow primitives from the same file."
+  component_tiers,"src/components is segmented common/ shared/ features/. Imports flow features -> shared -> common, one way. A features/ component never imports from another features/ area. See BIBLE.md section 2."
+  one_button_system,".button and .button.alt in globals.css are the ONLY button styling. Tailwind on top for layout only - never re-declare colour, font-size or padding."
   self_omitting_cards,"RailRow returns nothing for null/undefined/empty, which is how cards disappear rather than render blank labels"
   taxonomy_source,"lib/sectors.ts is the master data; prefer lib/taxonomy.ts helpers over the older lib/sector-mapper.ts"
   sanitize_by_runtime,"lib/sanitize.ts for anything server-side (regex, no DOM); DOMPurify only inside Body.tsx in the browser"
   languages_single_source,"lib/languages.ts resolves every API/URL/subdomain spelling - do not hand-roll language strings"
 
-docs[10]{file,what,status}:
+docs[13]{file,what,status}:
+  BIBLE.md,"The contract read before writing code: tier rule, hard rules, how to add a component, how to change styling, what to run before claiming done","CURRENT - created 2026-09-16. This is the entry point; CLAUDE.md points at it."
+  COMPONENTS.toon,"Every component, its tier, runtime, line count and every file that imports it, plus machine-detected orphans","GENERATED by scripts/gen-components.mjs - cannot go stale. Never hand-edit."
+  STYLING.toon,"The visual contract: tokens, canonical class strings, and every known divergence marked CANONICAL or DIVERGENCE","CURRENT - created 2026-09-16. Hand-written, so check its updated: field."
   docs/api-integration-2026-09-08.md,"Change report for the 2026-09-08 API cutover: what the backend fixed, what was rewired for press releases/events/companies, the two incidental fixes (SSR sanitiser 500, 2.4MB events cache), full verification log and the outstanding backend asks","CURRENT - supersedes the status of api-defect-report-2026-09-07.md, 2 of whose 3 reported 500s are now fixed"
   README.md,"Setup instructions and architecture claims","STALE - roughly 12 claims are false. Do NOT trust it for setup. Claims route groups, Zod, isomorphic-dompurify, @tailwindcss/typography, wired next-intl, a .env.example, a working USE_MOCK path, NEXT_PUBLIC_API_BASE_URL, a src/lib/services layout and subdomain rewrites - none of which exist"
   docs/api-defect-report-2026-09-07.md,"Backend hand-off raised for the three FromSql 500s","PARTLY OBSOLETE - the two Sectors failures (press-release/{id}, by-company/{id}) were fixed 2026-09-08. Only the Companies failure on /api/Events/{id} is still open. Kept as the record of what was raised"

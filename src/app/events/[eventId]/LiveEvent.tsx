@@ -23,14 +23,14 @@ import {
   EVENT_TZ_LABEL,
 } from '@/services/events';
 import type { CompanyArticle } from '@/services/company-articles';
-import { EventCountdown } from '@/components/events/EventCountdown';
-import { PressReleaseItem } from '@/components/press-release/PressReleaseItem';
+import { EventCountdown } from '@/components/features/events/EventCountdown';
+import { PressReleaseItem } from '@/components/shared/PressReleaseItem';
 import {
   eventDayCount,
   eventPhase,
   formatEventRange,
-} from '@/components/events/event-date';
-import { RailRow, RailSection, RAIL_WIDTH } from '@/components/ui/Rail';
+} from '@/components/features/events/event-date';
+import { RailRow, RailSection, Rail } from '@/components/shared/Rail';
 import { SITE_URL } from '@/lib/metadata';
 
 /** Neutral stand-in for the per-event gradient the curated pages carry. */
@@ -161,7 +161,7 @@ export function LiveEventPage({
 
             <section className="mb-10">
               <div className="mb-4 flex flex-wrap items-baseline justify-between gap-2">
-                <h2 className="text-2xl font-semibold text-black">Press Releases</h2>
+                <h2 className="text-2xl tracking-tight text-black">Press Releases</h2>
                 <p className="text-xs text-gray-400">
                   {sorted.length} {sorted.length === 1 ? 'release' : 'releases'} from this
                   event
@@ -188,7 +188,7 @@ export function LiveEventPage({
             </section>
           </div>
 
-          <aside className={RAIL_WIDTH}>
+          <Rail>
             <div className="mb-6">
               <EventCountdown
                 startDate={event.startDate}
@@ -229,7 +229,7 @@ export function LiveEventPage({
                 ? 'Archived event page. Details reflect the show as it ran.'
                 : 'Event details are drawn from the ACN Newswire events feed.'}
             </p>
-          </aside>
+          </Rail>
         </div>
       </div>
     </>

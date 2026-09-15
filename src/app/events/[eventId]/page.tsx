@@ -17,16 +17,16 @@ import { notFound } from 'next/navigation';
 import { getMockEvent, MOCK_EVENTS, type MockEvent } from '@/data/mock-events';
 import { fetchEvent, fetchEventReleases, eventYear } from '@/services/events';
 import { LiveEventPage } from './LiveEvent';
-import { EventCountdown } from '@/components/events/EventCountdown';
-import { EventReleaseItem } from '@/components/events/EventReleaseItem';
+import { EventCountdown } from '@/components/features/events/EventCountdown';
+import { EventReleaseItem } from '@/components/features/events/EventReleaseItem';
 import {
   eventDayCount,
   eventPhase,
   formatEventMoment,
   formatEventRange,
-} from '@/components/events/event-date';
-import { deriveEventIndustries, trimIndustries } from '@/components/events/event-industries';
-import { RailRow, RailSection, RAIL_WIDTH } from '@/components/ui/Rail';
+} from '@/components/features/events/event-date';
+import { deriveEventIndustries, trimIndustries } from '@/components/features/events/event-industries';
+import { RailRow, RailSection, Rail } from '@/components/shared/Rail';
 import { SITE_URL } from '@/lib/metadata';
 
 type Props = {
@@ -212,7 +212,7 @@ export default async function EventPage({ params }: Props) {
           {/* Main column */}
           <div className="min-w-0 flex-1">
             <section className="mb-10">
-              <h2 className="mb-4 text-2xl font-semibold text-black">About the Event</h2>
+              <h2 className="mb-4 text-2xl tracking-tight text-black">About the Event</h2>
               <div className="space-y-4">
                 {event.about.map((paragraph, i) => (
                   <p key={i} className="text-[15px] leading-relaxed text-gray-700">
@@ -231,7 +231,7 @@ export default async function EventPage({ params }: Props) {
             {industries.groups.length > 0 && (
               <section className="mb-10">
                 <div className="mb-3 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
-                  <h2 className="text-2xl font-semibold text-black">Industries Covered</h2>
+                  <h2 className="text-2xl tracking-tight text-black">Industries Covered</h2>
                   <p className="text-xs text-gray-400">
                     From this event&rsquo;s press release tags
                   </p>
@@ -275,7 +275,7 @@ export default async function EventPage({ params }: Props) {
 
             <section className="mb-10">
               <div className="mb-4 flex flex-wrap items-baseline justify-between gap-2">
-                <h2 className="text-2xl font-semibold text-black">Press Releases</h2>
+                <h2 className="text-2xl tracking-tight text-black">Press Releases</h2>
                 <p className="text-xs text-gray-400">
                   {releases.length} release{releases.length === 1 ? '' : 's'} from this event
                 </p>
@@ -297,7 +297,7 @@ export default async function EventPage({ params }: Props) {
 
           {/* Rail: the countdown first, because on an upcoming event it is the
               thing a visitor came for. */}
-          <aside className={RAIL_WIDTH}>
+          <Rail>
             <div className="mb-6">
               <EventCountdown
                 startDate={event.startDate}
@@ -366,7 +366,7 @@ export default async function EventPage({ params }: Props) {
                 ? 'Archived event page. Details reflect the show as it ran.'
                 : 'Sample event page. Details are illustrative and not drawn from the newswire API.'}
             </p>
-          </aside>
+          </Rail>
         </div>
       </div>
     </>

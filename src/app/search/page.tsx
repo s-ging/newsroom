@@ -2,9 +2,9 @@ import type { Metadata } from 'next';
 import { searchCompanies } from '@/services/company-search';
 import { fetchArticlesByIndustry } from '@/services/news-list';
 import { sectorOf, sectorLabel } from '@/lib/taxonomy';
-import { SearchSidebar } from '@/components/search/SearchSidebar';
-import { SearchResults } from '@/components/search/SearchResults';
-import { CompanyResults } from '@/components/search/CompanyResults';
+import { SearchSidebar } from '@/components/features/search/SearchSidebar';
+import { SearchResults } from '@/components/features/search/SearchResults';
+import { CompanyResults } from '@/components/features/search/CompanyResults';
 import type { SearchResult } from '@/services/search';
 import { generateListingMetadata } from '@/lib/metadata';
 

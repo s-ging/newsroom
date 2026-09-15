@@ -1,0 +1,196 @@
+// components/features/company/CompanySidebar.tsx
+// The wiki-style rail: identity, contact and stock, in that order. Each card
+// omits itself entirely when it has nothing to show.
+//
+// Built on the shared <Rail> shell and its primitives so this and the article
+// rail stay dimensionally identical. The only difference here is `boxed`, since
+// on this page the rail carries the page rather than sitting beside it.
+
+import {
+  Rail,
+  RailSection,
+  RailRow,
+  RailExternalLink,
+} from '@/components/shared/Rail';
+import { SocialLinks } from '@/components/shared/SocialLinks';
+import { toDisplayUrl, type CompanyProfile } from '@/services/company-profile';
+
+function IdentityCard({ profile }: { profile: CompanyProfile }) {
+  const hasFacts =
+    profile.country ||
+    profile.established ||
+    profile.listed ||
+    profile.industry ||
+    profile.employees;
+
+  return (
+    <RailSection boxed>
+      {/* The company name is the page's subject, so it carries the h1 even
+          though it sits in the rail. "Company Description" is a section under it. */}
+      <h1 className="text-xl font-semibold text-black text-center pt-1 pb-3">
+        {profile.name}
+      </h1>
+
+      {profile.logoSrc && (
+        <div className="flex items-center justify-center pb-4">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={profile.logoSrc}
+            alt={`${profile.name} logo`}
+            className="max-h-20 w-auto max-w-[70%] object-contain"
+          />
+        </div>
+      )}
+
+      {hasFacts && (
+        <dl className="border-t border-gray-200 pt-1">
+          <RailRow divided label="Country" value={profile.country} />
+          <RailRow divided label="Established" value={profile.established} />
+          <RailRow divided label="Listed" value={profile.listed} />
+          <RailRow divided label="Industry" value={profile.industry} />
+          <RailRow divided label="Employees" value={profile.employees} />
+          {/* Website lives in Contact Details, not here — one row, one place. */}
+        </dl>
+      )}
+    </RailSection>
+  );
+}
+
+/**
+ * One row per named contact on the company record. The label is the person (or
+ * "Contact" where the API gives a phone and email but no name), and the value
+ * stacks whatever of phone and email exists — the API populates these
+ * inconsistently, so no combination is assumed.
+ */
+function ContactRows({ profile }: { profile: CompanyProfile }) {
+  return (
+    <>
+      {profile.contacts.map((contact, i) => (
+        <RailRow
+          divided
+          block
+          key={`${contact.name ?? 'contact'}-${contact.email ?? contact.phone ?? i}`}
+          label={contact.name ?? 'Contact'}
+          value={
+            <>
+              {contact.phone && <div>{contact.phone}</div>}
+              {contact.email && (
+                <div>
+                  <a
+                    href={`mailto:${contact.email}`}
+                    className="text-blue-700 hover:underline break-all"
+                  >
+                    {contact.email}
+                  </a>
+                </div>
+              )}
+            </>
+          }
+        />
+      ))}
+    </>
+  );
+}
+
+function ContactCard({ profile }: { profile: CompanyProfile }) {
+  const hasContact =
+    profile.headquarters.length > 0 ||
+    profile.telephone ||
+    profile.facsimile ||
+    profile.website ||
+    profile.contacts.length > 0 ||
+    profile.socials.length > 0;
+
+  if (!hasContact) return null;
+
+  return (
+    <RailSection boxed title="Contact Details">
+      <dl>
+        {profile.headquarters.length > 0 && (
+          <RailRow
+            divided
+            block
+            label="Address"
+            value={profile.headquarters.map(line => (
+              <div key={line}>{line}</div>
+            ))}
+          />
+        )}
+        <RailRow divided label="Phone" value={profile.telephone} />
+        <RailRow divided label="Fax" value={profile.facsimile} />
+        <ContactRows profile={profile} />
+        <RailRow
+          divided
+          label="Website"
+          value={
+            profile.website && (
+              <RailExternalLink href={profile.website}>
+                {toDisplayUrl(profile.website)}
+              </RailExternalLink>
+            )
+          }
+        />
+        {profile.socials.length > 0 && (
+          <RailRow
+            divided
+            block
+            label="Follow"
+            value={<SocialLinks links={profile.socials} />}
+          />
+        )}
+      </dl>
+    </RailSection>
+  );
+}
+
+function StockCard({ profile }: { profile: CompanyProfile }) {
+  // Unlisted entities — statutory bodies, private companies — never get this
+  // card, even when the API hands back an exchange record for them.
+  if (!profile.isListed) return null;
+
+  const hasStock =
+    profile.tickers.length > 0 ||
+    profile.otc ||
+    profile.exchangeName ||
+    profile.quoteCodes.length > 0;
+
+  if (!hasStock) return null;
+
+  return (
+    <RailSection boxed title="Stock Details">
+      <dl>
+        {profile.tickers.map(ticker => (
+          <RailRow
+            divided
+            key={`${ticker.exchange}-${ticker.symbol}`}
+            label={ticker.exchange}
+            value={
+              <>
+                <span className="font-semibold text-gray-900">{ticker.symbol}</span>
+                {/* Only API-sourced listings carry an ISIN; curated ones omit it. */}
+                {ticker.isin && (
+                  <span className="ml-2 text-gray-500">ISIN {ticker.isin}</span>
+                )}
+              </>
+            }
+          />
+        ))}
+        <RailRow divided label="OTC" value={profile.otc} />
+        <RailRow divided label="Exchange" value={profile.exchangeName} />
+        {profile.quoteCodes.map(code => (
+          <RailRow divided key={code.label} label={`${code.label} code`} value={code.value} />
+        ))}
+      </dl>
+    </RailSection>
+  );
+}
+
+export function CompanySidebar({ profile }: { profile: CompanyProfile }) {
+  return (
+    <Rail sticky>
+      <IdentityCard profile={profile} />
+      <ContactCard profile={profile} />
+      <StockCard profile={profile} />
+    </Rail>
+  );
+}

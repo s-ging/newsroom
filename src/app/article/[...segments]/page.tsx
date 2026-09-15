@@ -2,7 +2,7 @@
 import type { Metadata } from 'next';
 import { redirect, notFound } from 'next/navigation';
 import { isRedirectError } from 'next/dist/client/components/redirect-error';
-import { PressRelease, InfiniteArticleFeed } from '@/components/press-release';
+import { PressRelease, InfiniteArticleFeed } from '@/components/features/article';
 import { fetchPressRelease } from '@/services/press-release';
 import { fetchCompanyArticles } from '@/services/company-articles';
 import { fetchReleaseVersions } from '@/services/release-versions';

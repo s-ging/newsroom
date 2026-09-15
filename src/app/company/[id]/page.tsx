@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { PressReleaseItem } from '@/components/press-release/PressReleaseItem';
-import { CompanySidebar } from '@/components/company/CompanySidebar';
-import { CompanyPagination } from '@/components/company/CompanyPagination';
-import { FeedUnavailable } from '@/components/company/FeedUnavailable';
+import { PressReleaseItem } from '@/components/shared/PressReleaseItem';
+import { CompanySidebar } from '@/components/features/company/CompanySidebar';
+import { CompanyPagination } from '@/components/features/company/CompanyPagination';
+import { FeedUnavailable } from '@/components/features/company/FeedUnavailable';
 import { fetchCompanyArticlesPage } from '@/services/company-articles';
 import { fetchCompanyProfile } from '@/services/company-profile';
 import { generateCompanyMetadata, SITE_URL } from '@/lib/metadata';
@@ -71,7 +71,7 @@ export default async function CompanyPage({ params, searchParams }: Props) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <div className="container mx-auto px-4 py-6 max-w-7xl min-h-125 lg:px-8 py-8">
+      <div className="container mx-auto px-4 py-8 max-w-7xl min-h-125 lg:px-8">
         {/*
           The API was unreachable, so this page was assembled from the local
           company index and curated file. Everything on it is real — it is just
@@ -94,7 +94,7 @@ export default async function CompanyPage({ params, searchParams }: Props) {
           <div className="flex-1 min-w-0">
             {profile.description.length > 0 && (
               <section className="mb-10">
-                <h2 className="text-2xl font-semibold text-black mb-4">
+                <h2 className="text-2xl tracking-tight text-black mb-4">
                   Company Description
                 </h2>
                 <div className="space-y-4">
@@ -108,7 +108,7 @@ export default async function CompanyPage({ params, searchParams }: Props) {
             )}
 
             <section>
-              <h2 className="text-2xl font-semibold text-black mb-4">
+              <h2 className="text-2xl tracking-tight text-black mb-4">
                 {profile.description.length > 0 ? 'Press Releases' : `Press Releases from ${profile.name}`}
               </h2>
 

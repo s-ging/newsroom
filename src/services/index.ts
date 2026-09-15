@@ -1,5 +1,5 @@
 // services/index.ts
-import type { PressReleaseData } from '@/components/press-release/types';
+import type { PressReleaseData } from '@/types/press-release';
 import { mockPressRelease } from './mock-press-release';
 import { fetchPressRelease } from './press-release';
  

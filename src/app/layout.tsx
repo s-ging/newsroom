@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Suspense } from "react";
 import "./globals.css";
-import { TopNav, MainNav } from '@/components/nav';
-import Footer from '@/components/ui/Footer'
+import { TopNav, MainNav } from '@/components/common/nav';
+import Footer from '@/components/common/Footer/Footer'
 import { generateBaseMetadata } from '@/lib/metadata';
-import AbOverlay from '@/components/ab/AbOverlay';
+import AbOverlay from '@/components/common/ab/AbOverlay';
 
 const inter = Inter ({
   variable: "--font-inter",

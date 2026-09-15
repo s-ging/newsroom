@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { fetchEvents, type Event } from '@/services/events';
 import { generateListingMetadata } from '@/lib/metadata';
 import { listMockEvents, type MockEvent } from '@/data/mock-events';
-import { EventListCard } from '@/components/events/EventListCard';
+import { EventListCard } from '@/components/features/events/EventListCard';
 
 export const metadata: Metadata = generateListingMetadata('events');
 
@@ -23,7 +23,7 @@ function EventSection({
   if (events.length === 0) return null;
   return (
     <section className="mb-10">
-      <h2 className="text-lg font-semibold text-gray-700 mb-4">{title}</h2>
+      <h2 className="text-2xl tracking-tight text-black mb-4">{title}</h2>
       <div className="divide-y divide-gray-100">
         {events.map((event) => (
           <EventItem key={event.id} event={event} />
@@ -93,11 +93,13 @@ function EventItem({ event }: { event: Event }) {
         </div>
       </Link>
 
-      {/* Action buttons */}
+      {/* Action buttons. These rolled their own bordered pill until now —
+          .button.alt from globals.css is the site-wide button, and is what
+          both event detail pages already use. */}
       <div className="shrink-0 flex flex-col justify-center gap-2 pl-4">
         <Link
           href={`/events/${event.id}`}
-          className="px-3 py-1.5 text-xs rounded border text-gray-700 border-gray-300 hover:bg-gray-50 whitespace-nowrap"
+          className="button alt block text-center whitespace-nowrap"
         >
           Event Press Releases
         </Link>
@@ -105,7 +107,7 @@ function EventItem({ event }: { event: Event }) {
           href={event.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="px-3 py-1.5 text-xs rounded border text-gray-700 border-gray-300 hover:bg-gray-50 whitespace-nowrap"
+          className="button alt block text-center whitespace-nowrap"
         >
           Event Website
         </a>
@@ -131,7 +133,7 @@ function FeaturedEventSection({
   return (
     <section className="mb-10">
       <div className="mb-4 flex flex-wrap items-baseline justify-between gap-2">
-        <h2 className="text-lg font-semibold text-gray-700">{title}</h2>
+        <h2 className="text-2xl tracking-tight text-black">{title}</h2>
         {note && <p className="text-xs text-gray-400">{note}</p>}
       </div>
       <div className="divide-y divide-gray-100 border-y border-gray-100">

@@ -1,0 +1,100 @@
+meta:
+  file: COMPONENTS.toon
+  purpose: "Every component, its tier, and every file that imports it. Read with BIBLE.md and STYLING.toon."
+  format: TOON
+  generated_by: scripts/gen-components.mjs
+  hand_edit: NEVER - regenerate with `npm run components:map`
+  generated: 2026-09-16
+  refresh: "Runs on every commit via .githooks/pre-commit. Enable once with: git config core.hooksPath .githooks"
+  consumers_note: "Paths are repo-relative. A component listed against only an index.tsx barrel appears in orphans."
+
+tiers:
+  rule: "Imports flow one way: features -> shared -> common. A features/ component NEVER imports from another features/ area. If two areas need it, promote it to shared/."
+  common: "Mounted by app/layout.tsx, so it is on every page. nav, Footer, ab overlay."
+  shared: "Imported by 2+ DIFFERENT feature areas. That promotion is the ONLY reason a component lives here."
+  features: "One feature area only. Two consumers inside the same area still counts as one area."
+  route_local: "app/events/[eventId]/LiveEvent.tsx and app/admin/AdminPanel.tsx are page bodies, not components. They stay beside their route and are not listed here."
+
+totals[5]{metric,value}:
+  component_files,60
+  client,31
+  server,22
+  css,3
+  orphans,1
+
+common[23]{file,runtime,lines,used_by,consumers}:
+  common/Footer/Footer.tsx,server,135,1,app/layout.tsx
+  common/Footer/SocialIcon.jsx,server,34,1,components/common/Footer/Footer.tsx
+  common/ab/AbHiddenTrigger.tsx,client,18,1,components/common/nav/TopNav/index.tsx
+  common/ab/AbOverlay.css,css,85,2,"components/common/ab/AbHiddenTrigger.tsx components/common/ab/AbOverlay.tsx"
+  common/ab/AbOverlay.tsx,client,481,1,app/layout.tsx
+  common/nav/MainNav/Company/index.tsx,client,88,1,components/common/nav/MainNav/MegaMenuNav.tsx
+  common/nav/MainNav/Country/index.tsx,client,45,1,components/common/nav/MainNav/MegaMenuNav.tsx
+  common/nav/MainNav/Industry/index.tsx,client,56,1,components/common/nav/MainNav/MegaMenuNav.tsx
+  common/nav/MainNav/Language/index.tsx,client,34,1,components/common/nav/MainNav/MegaMenuNav.tsx
+  common/nav/MainNav/MainNav.css,css,89,1,components/common/nav/MainNav/index.tsx
+  common/nav/MainNav/MegaMenuNav.tsx,client,132,1,components/common/nav/MainNav/index.tsx
+  common/nav/MainNav/Region/index.tsx,client,38,1,components/common/nav/MainNav/MegaMenuNav.tsx
+  common/nav/MainNav/Sector/index.tsx,client,37,1,components/common/nav/MainNav/MegaMenuNav.tsx
+  common/nav/MainNav/index.tsx,client,256,1,components/common/nav/index.tsx
+  common/nav/MainNav/types.ts,module,39,1,components/common/nav/MainNav/MegaMenuNav.tsx
+  common/nav/TopNav/ClientLinks.tsx,client,66,1,components/common/nav/TopNav/index.tsx
+  common/nav/TopNav/DateDisplay.tsx,client,32,1,components/common/nav/TopNav/index.tsx
+  common/nav/TopNav/DateTimeDisplay.tsx,client,63,1,components/common/nav/TopNav/index.tsx
+  common/nav/TopNav/LanguageSelector.tsx,client,101,1,components/common/nav/TopNav/index.tsx
+  common/nav/TopNav/TopNav.css,css,79,1,components/common/nav/TopNav/index.tsx
+  common/nav/TopNav/index.tsx,server,51,1,components/common/nav/index.tsx
+  common/nav/TopNav/types.ts,module,33,3,"components/common/nav/TopNav/ClientLinks.tsx components/common/nav/TopNav/LanguageSelector.tsx components/common/nav/TopNav/index.tsx"
+  common/nav/index.tsx,server,4,1,app/layout.tsx
+
+features_article[11]{file,runtime,lines,used_by,consumers}:
+  features/article/ArticleFooterLink.tsx,server,32,2,"components/features/article/PressRelease.tsx components/features/article/index.tsx"
+  features/article/ArticleMeta.tsx,server,66,1,components/features/article/index.tsx
+  features/article/ArticleSidebar.tsx,server,172,1,components/features/article/PressRelease.tsx
+  features/article/Body.tsx,client,60,2,"components/features/article/PressRelease.tsx components/features/article/index.tsx"
+  features/article/Company.tsx,client,77,2,"components/features/article/PressRelease.tsx components/features/article/index.tsx"
+  features/article/Hero.tsx,client,98,2,"components/features/article/PressRelease.tsx components/features/article/index.tsx"
+  features/article/InfiniteArticleFeed.tsx,client,165,1,components/features/article/index.tsx
+  features/article/MoreFromCompany.tsx,server,45,2,"components/features/article/PressRelease.tsx components/features/article/index.tsx"
+  features/article/PressRelease.tsx,server,72,2,"components/features/article/InfiniteArticleFeed.tsx components/features/article/index.tsx"
+  features/article/ShareBar.tsx,client,108,2,"components/features/article/PressRelease.tsx components/features/article/index.tsx"
+  features/article/index.tsx,server,13,1,app/article/[...segments]/page.tsx
+
+features_company[3]{file,runtime,lines,used_by,consumers}:
+  features/company/CompanyPagination.tsx,server,54,1,app/company/[id]/page.tsx
+  features/company/CompanySidebar.tsx,server,197,1,app/company/[id]/page.tsx
+  features/company/FeedUnavailable.tsx,server,50,1,app/company/[id]/page.tsx
+
+features_events[6]{file,runtime,lines,used_by,consumers}:
+  features/events/EventCountdown.tsx,client,142,2,"app/events/[eventId]/LiveEvent.tsx app/events/[eventId]/page.tsx"
+  features/events/EventListCard.tsx,server,57,1,app/events/page.tsx
+  features/events/EventReleaseItem.tsx,server,68,1,app/events/[eventId]/page.tsx
+  features/events/EventStatusPill.tsx,client,72,1,components/features/events/EventListCard.tsx
+  features/events/event-date.ts,module,85,5,"app/events/[eventId]/LiveEvent.tsx app/events/[eventId]/page.tsx components/features/events/EventCountdown.tsx components/features/events/EventListCard.tsx components/features/events/EventStatusPill.tsx"
+  features/events/event-industries.ts,module,158,2,"app/events/[eventId]/page.tsx components/features/events/EventReleaseItem.tsx"
+
+features_home[6]{file,runtime,lines,used_by,consumers}:
+  features/home/CategoryRow.tsx,client,145,1,app/page.tsx
+  features/home/EventsRow.tsx,client,88,1,app/page.tsx
+  features/home/FeaturedReleases.tsx,server,108,1,app/page.tsx
+  features/home/HomeHero.tsx,client,202,1,app/page.tsx
+  features/home/HomeSkeletons.tsx,server,92,2,"app/loading.tsx app/page.tsx"
+  features/home/ShelfScrollBar.tsx,client,210,2,"components/features/home/CategoryRow.tsx components/features/home/EventsRow.tsx"
+
+features_search[5]{file,runtime,lines,used_by,consumers}:
+  features/search/CompanyResults.tsx,server,105,1,app/search/page.tsx
+  features/search/NestedCheckbox.tsx,client,117,1,components/features/search/SearchSidebar.tsx
+  features/search/Pagination.tsx,client,66,2,"components/features/search/CompanyResults.tsx components/features/search/SearchResults.tsx"
+  features/search/SearchResults.tsx,server,71,1,app/search/page.tsx
+  features/search/SearchSidebar.tsx,client,269,1,app/search/page.tsx
+
+shared[6]{file,runtime,lines,used_by,consumers}:
+  shared/LanguageTag.tsx,client,356,7,"components/common/nav/MainNav/Language/index.tsx components/features/article/ArticleMeta.tsx components/features/article/ArticleSidebar.tsx components/features/article/Hero.tsx components/features/events/EventReleaseItem.tsx components/features/search/SearchSidebar.tsx components/shared/PressReleaseItem.tsx"
+  shared/NavPending.tsx,client,38,2,"app/news/page.tsx components/features/company/CompanyPagination.tsx"
+  shared/PressReleaseItem.tsx,client,157,6,"app/company/[id]/page.tsx app/events/[eventId]/LiveEvent.tsx app/events/[eventId]/press-releases/page.tsx app/news/page.tsx components/features/article/MoreFromCompany.tsx components/features/search/SearchResults.tsx"
+  shared/Rail.tsx,server,136,8,"app/article/[...segments]/loading.tsx app/company/[id]/loading.tsx app/events/[eventId]/LiveEvent.tsx app/events/[eventId]/loading.tsx app/events/[eventId]/page.tsx components/features/article/ArticleSidebar.tsx components/features/company/CompanySidebar.tsx components/shared/SocialLinks.tsx"
+  shared/Skeleton.tsx,server,135,9,"app/admin/loading.tsx app/article/[...segments]/loading.tsx app/company/[id]/loading.tsx app/events/[eventId]/loading.tsx app/events/[eventId]/press-releases/loading.tsx app/events/loading.tsx app/news/loading.tsx app/search/loading.tsx components/features/home/HomeSkeletons.tsx"
+  shared/SocialLinks.tsx,server,102,2,"components/features/article/ArticleSidebar.tsx components/features/company/CompanySidebar.tsx"
+
+orphans[1]{file,tier,note}:
+  features/article/ArticleMeta.tsx,features/article,"re-exported by a barrel that nobody pulls it from - dead"

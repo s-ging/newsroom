@@ -22,6 +22,7 @@
 // read from `contacts[]` and the curated file instead, and are not chased here.
 
 import { sanitizeText } from '@/lib/sanitize';
+import { resolveIndustry } from '@/lib/taxonomy';
 import { curatedProfileFor, type CuratedCompanyProfile } from '@/data/company-profiles';
 import { apiInit } from '@/lib/api-timeout';
 import { companyFromIndex } from '@/services/company-search';
@@ -67,8 +68,20 @@ interface ApiCompany {
   boilerPlate: string | null;
   extBoilerPlate: string | null;
   url: string | null;
-  /** Full industry names. Tolerates plain strings or {sectorName} objects. */
-  sectors?: (string | { sectorName?: string | null })[] | null;
+  /**
+   * Full industry names.
+   *
+   * The wire sends objects keyed `name` — `{ compId, id, name, description }`,
+   * verified on company 82, 2026-09-10. `sectorName` was the key this code
+   * declared and read, and it has never been returned here (C-M1); it is kept
+   * in the union as a tolerated fallback, not as the expected shape. The plain
+   * string form is likewise defensive rather than observed.
+   *
+   * `id` is deliberately not declared: it belongs to a taxonomy that is NOT the
+   * one in src/lib/sectors.ts, so nothing here should be tempted to match on it.
+   * See buildIndustry.
+   */
+  sectors?: (string | { name?: string | null; sectorName?: string | null })[] | null;
   tickers?: ApiTicker[] | null;
   contacts?: ApiContact[] | null;
   /** Bloomberg quote codes. Shape unverified — read defensively. */
@@ -229,13 +242,43 @@ async function getJsonOrNull<T>(url: string): Promise<T | null> {
   return outcome.status === 'ok' ? outcome.data : null;
 }
 
-/** Full industry names off `sectors[]`, which may hold strings or objects. */
+/**
+ * Full industry names off `sectors[]`, which may hold strings or objects.
+ *
+ * C-M1 — the object form is keyed `name`, NOT `sectorName`.
+ *
+ * This read `s.sectorName`, which the endpoint has never sent. Every element
+ * therefore cleaned to null, `names` came back empty, and the Industry row
+ * rendered blank on every company without a curated entry — while the correct
+ * data sat in the response untouched. Verified against company 82 on
+ * 2026-09-10, which returns seven sectors shaped:
+ *
+ *   { compId: 82, id: 211, name: "Aerospace & Defence", description: "Aerospace & Defence" }
+ *
+ * `sectorName` is kept in the union below and read as a fallback: it is the key
+ * the article endpoints use for their own (coarser) sector field, so a future
+ * shape carrying it is plausible and costs nothing to tolerate. `name` wins.
+ *
+ * Names resolve through `resolveIndustry` per BIBLE rule 7, which canonicalises
+ * the wire's spelling — it is punctuation- and case-insensitive, so the wire's
+ * "Construct, Engineering" lands on the master list's "Construct Engineering".
+ * All seven of company 82's sector names resolve that way. An unresolved name
+ * falls back to the wire's own string rather than being dropped, so a genuinely
+ * new industry still renders instead of silently vanishing.
+ *
+ * Match on NAME, never on `id`. acn-admin resolved this same data by id against
+ * its master list and produced wrong-but-real names — Mitsubishi Heavy
+ * Industries came out tagged "Fashion & Apparel" and "eSports Gaming". The
+ * API's sector ids are a different taxonomy; see AC-M1 in
+ * contracts/company.before.json.
+ */
 function buildIndustry(company: ApiCompany): string | null {
   if (!Array.isArray(company.sectors)) return null;
 
   const names = company.sectors
-    .map(s => (typeof s === 'string' ? clean(s) : clean(s?.sectorName)))
-    .filter((s): s is string => s !== null);
+    .map(s => (typeof s === 'string' ? clean(s) : clean(s?.name ?? s?.sectorName)))
+    .filter((s): s is string => s !== null)
+    .map(name => resolveIndustry(name)?.industry ?? name);
 
   // Deduped because a company tagged under several industries in the same
   // sector repeats the name, and "Financial, Financial" reads as a bug.

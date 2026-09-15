@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import type { PressReleaseData } from '@/components/press-release/types';
+import type { PressReleaseData } from '@/types/press-release';
 import type { CompanyProfile } from '@/services/company-profile';
 import { headlineToSlug, languageToSlug } from '@/services/acn-adapter';
 
